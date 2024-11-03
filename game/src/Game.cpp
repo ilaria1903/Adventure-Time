@@ -10,17 +10,14 @@ void Game::start() {
     initStory();
     readStory();
 
-    ///////////////////////////////////////////////////////////////////////////
+
     /// NOTE: sync with env variable APP_WINDOW from .github/workflows/cmake.yml:31
     window.create(sf::VideoMode({800, 700}), "Adventure Time", sf::Style::Default);
-    ///////////////////////////////////////////////////////////////////////////
-    //
-    ///////////////////////////////////////////////////////////////////////////
-    /// NOTE: mandatory use one of vsync or FPS limit (not both)            ///
-    /// This is needed so we do not burn the GPU                            ///
-    window.setVerticalSyncEnabled(true);                                    ///
-    /// window.setFramerateLimit(60);                                       ///
-    ///////////////////////////////////////////////////////////////////////////
+
+
+    window.setVerticalSyncEnabled(true);
+    /// window.setFramerateLimit(60);
+
 
     while(window.isOpen()) {
         bool shouldExit = false;
