@@ -53,6 +53,10 @@ endif()
 add_executable(${PROJECT_NAME}
     main.cpp
     generated/src/Helper.cpp
+    game/src/Camera.cpp
+    game/src/Character.cpp
+    game/src/Level.cpp
+    game/src/Game.cpp
     env_fixes.h
 )
 

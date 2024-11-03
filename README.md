@@ -1,4 +1,8 @@
-# Nu primesc notă pentru că nu am pus titlu și descriere
+# Adventure Time
+
+### Descriere
+
+Mystery-Quest is a Hybrid Text Adventure RPG in which players embark on a thrilling journey through various levels, facing challenging enemies and unraveling mysteries along the way. The game is structured in levels, each presenting unique foes that the player must overcome to progress.
 
 ### Important!
 Aveți voie cu cod generat de modele de limbaj la care nu ați contribuit semnificativ doar în folder-ul `generated`.
@@ -14,22 +18,22 @@ O cerință nu se consideră îndeplinită dacă este realizată doar ca o serie
 
 ### Tema 0
 
-- [ ] Nume proiect (poate fi schimbat ulterior)
-- [ ] Scurtă descriere a temei alese, ce v-ați propus să implementați
+- [x] Nume proiect (poate fi schimbat ulterior)
+- [x] Scurtă descriere a temei alese, ce v-ați propus să implementați
 
 ## Tema 1
 
 #### Cerințe
-- [ ] definirea a minim **3-4 clase** folosind compunere cu clasele definite de voi
-- [ ] constructori de inițializare cu parametri
-- [ ] pentru o aceeași (singură) clasă: constructor de copiere, `operator=` de copiere, destructor
+- [x] definirea a minim **3-4 clase** folosind compunere cu clasele definite de voi
+- [x] constructori de inițializare cu parametri
+- [x] pentru o aceeași (singură) clasă: constructor de copiere, `operator=` de copiere, destructor
 <!-- - [ ] pentru o altă clasă: constructor de mutare, `operator=` de mutare, destructor -->
 <!-- - [ ] pentru o altă clasă: toate cele 5 funcții membru speciale -->
-- [ ] `operator<<` pentru toate clasele pentru afișare (std::ostream)
-- [ ] cât mai multe `const` (unde este cazul)
-- [ ] implementarea a minim 3 funcții membru publice pentru funcționalități specifice temei alese, dintre care cel puțin 1-2 funcții mai complexe
+- [x] `operator<<` pentru toate clasele pentru afișare (std::ostream)
+- [x] cât mai multe `const` (unde este cazul)
+- [x] implementarea a minim 3 funcții membru publice pentru funcționalități specifice temei alese, dintre care cel puțin 1-2 funcții mai complexe
   - nu doar citiri/afișări sau adăugat/șters elemente într-un/dintr-un vector
-- [ ] scenariu de utilizare a claselor definite:
+- [x] scenariu de utilizare a claselor definite:
   - crearea de obiecte și apelarea tuturor funcțiilor membru publice în main
   - vor fi adăugate în fișierul `tastatura.txt` DOAR exemple de date de intrare de la tastatură (dacă există); dacă aveți nevoie de date din fișiere, creați alte fișiere separat
 - [ ] tag de `git`: de exemplu `v0.1`
@@ -38,7 +42,7 @@ O cerință nu se consideră îndeplinită dacă este realizată doar ca o serie
 ## Tema 2
 
 #### Cerințe
-- [ ] separarea codului din clase în `.h` (sau `.hpp`) și `.cpp`
+- [x] separarea codului din clase în `.h` (sau `.hpp`) și `.cpp`
 - [ ] moșteniri:
   - minim o clasă de bază și **3 clase derivate** din aceeași ierarhie
   - ierarhia trebuie să fie cu bază proprie, nu derivată dintr-o clasă predefinită
