@@ -1,8 +1,8 @@
-# Adventure Time
+# Adventure-Time
 
 ### Descriere
 
-Mystery-Quest is a Hybrid Text Adventure RPG in which players embark on a thrilling journey through various levels, facing challenging enemies and unraveling mysteries along the way. The game is structured in levels, each presenting unique foes that the player must overcome to progress.
+Adventure-Time is a Hybrid Text Adventure RPG in which players embark on a thrilling journey through various levels, facing challenging enemies and unraveling mysteries along the way. The game is structured in levels, each presenting unique foes that the player must overcome to progress.
 
 ### Important!
 Aveți voie cu cod generat de modele de limbaj la care nu ați contribuit semnificativ doar în folder-ul `generated`.
