@@ -1,4 +1,7 @@
-# Nu primesc notă pentru că nu am pus titlu și descriere
+# Adventure-Time
+
+### Descriere
+Adventure-Time is a Hybrid Text Adventure RPG in which players embark on a thrilling journey through various levels, facing challenging enemies and unraveling mysteries along the way. The game is structured in levels, each presenting unique foes that the player must overcome to progress.
 
 ### Important!
 Aveți voie cu cod generat de modele de limbaj la care nu ați contribuit semnificativ doar în folder-ul `generated`.
