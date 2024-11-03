@@ -35,7 +35,7 @@ void Game::start() {
                           << "New height: " << window.getSize().y << '\n';
                 break;
             case sf::Event::KeyPressed:
-                // std::cout << "Received key " << (e.key.code == sf::Keyboard::X ? "X" : "(other)") << "\n";
+
                 if(e.key.code == sf::Keyboard::Escape)
                     shouldExit = true;
                 break;
@@ -63,7 +63,7 @@ void Game::update() {
 }
 
 void Game::render() {
-    // Draw Player
+
     sf::CircleShape playerShape(10);
     playerShape.setFillColor(sf::Color::Green);
     playerShape.setPosition(character.getX(), character.getY());
@@ -90,7 +90,7 @@ void Game::handleInput() {
 }
 
 void Game::initStory() {
-    // Read story from file
+
     std::cout << "Reading story...\n";
 
     FILE* file = fopen("..//story.txt", "r");

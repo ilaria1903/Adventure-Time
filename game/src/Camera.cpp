@@ -1,7 +1,7 @@
 #include "../include/Camera.h"
 
 Camera::Camera(int x, int y)
-    : x(x), y(y) {}  // This is fine, as initializer lists use the parameters directly
+    : x(x), y(y) {}
 
 Camera::Camera(const Camera& other)
     : x(other.x), y(other.y) {}
