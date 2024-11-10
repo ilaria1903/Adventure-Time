@@ -11,9 +11,9 @@ void Camera::follow(int targetX, int targetY) {
     this->y = targetY;
 }
 
-void Camera::setPosition(int x, int y) {
-    this->x = x;
-    this->y = y;
+void Camera::setPosition(int newX, int newY) {
+    this->x = newX;
+    this->y = newY;
 }
 
 std::ostream& operator<<(std::ostream& os, const Camera& camera) {
