@@ -24,14 +24,15 @@ void Character::move(int dx, int dy) {
     y += dy * speed;
 }
 
-void Character::takeDamage(int amount) {
-    health -= amount;
-    if (health < 0) health = 0;
-}
+//Temporar nu se folosesc
+//void Character::takeDamage(int amount) {
+   // health -= amount;
+   // if (health < 0) health = 0;
+//}
 
-void Character::heal(int amount) {
-    health += amount;
-}
+//void Character::heal(int amount) {
+  //  health += amount;
+//}
 
 std::ostream& operator<<(std::ostream& os, const Character& character) {
     os << "Character(" << character.name << ", Health: " << character.health << ", Position: (" << character.x << ", " << character.y << "))";

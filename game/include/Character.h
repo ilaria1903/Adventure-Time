@@ -13,13 +13,16 @@ public:
     Character& operator=(const Character& other);
     ~Character();
 
-    int getHealth() const { return health; }
+    //Temporar nu se foloseste
+    //int getHealth() const { return health; }
     int getX() const { return x; }
     int getY() const { return y; }
 
     void move(int dx, int dy);
-    void takeDamage(int amount);
-    void heal(int amount);
+
+    //Temporar nu se foloseste
+    //void takeDamage(int amount);
+   // void heal(int amount);
 
     friend std::ostream& operator<<(std::ostream& os, const Character& character);
 

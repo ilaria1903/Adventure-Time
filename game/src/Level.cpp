@@ -6,24 +6,25 @@ Level::Level(int width, int height)
 Level::Level(const Level& other)
     : width(other.width), height(other.height), obstacles(other.obstacles) {}
 
-void Level::addObstacle(int x, int y) {
-    if (x >= 0 && x < width && y >= 0 && y < height) {
-        obstacles[x][y] = true;
-    }
-}
+//Temporar nu se folosesc
+//void Level::addObstacle(int x, int y) {
+//  if (x >= 0 && x < width && y >= 0 && y < height) {
+//    obstacles[x][y] = true;
+// }
+//}
 
-void Level::removeObstacle(int x, int y) {
-    if (x >= 0 && x < width && y >= 0 && y < height) {
-        obstacles[x][y] = false;
-    }
-}
+//void Level::removeObstacle(int x, int y) {
+ //   if (x >= 0 && x < width && y >= 0 && y < height) {
+ //       obstacles[x][y] = false;
+   // }
+//}
 
-bool Level::isObstacle(int x, int y) const {
-    if (x >= 0 && x < width && y >= 0 && y < height) {
-        return obstacles[x][y];
-    }
-    return false;
-}
+//bool Level::isObstacle(int x, int y) const {
+  //  if (x >= 0 && x < width && y >= 0 && y < height) {
+ //       return obstacles[x][y];
+ //   }
+//    return false;
+//}
 
 std::ostream& operator<<(std::ostream& os, const Level& level) {
     os << "Level(" << level.width << "x" << level.height << ")";

@@ -18,9 +18,10 @@ public:
     explicit SomeClass(int) {}
 };
 
-SomeClass *getC() {
-    return new SomeClass{2};
-}
+//Temporar nu se foloseste
+//SomeClass *getC() {
+   // return new SomeClass{2};
+//}
 
 
 
