@@ -4,6 +4,7 @@
 #include "Character.h"
 #include "Level.h"
 #include "Camera.h"
+#include "LevelEditor.h"
 
 #include <iostream>
 #include <array>
@@ -23,7 +24,6 @@ public:
     void update();
     void render();
     void handleInput();
-    void initStory();
     void readStory();
 
     friend std::ostream& operator<<(std::ostream& os, const Game& game);
@@ -31,9 +31,13 @@ public:
 private:
     Character character;
     Level level;
+    LevelEditor editor;
     Camera camera;
     sf::RenderWindow window;
     std::string story;
+    sf::Clock clock;
+    float deltaTime;
+    bool isFocused;
 };
 
 #endif // GAME_H
