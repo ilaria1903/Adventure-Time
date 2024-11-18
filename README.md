@@ -4,6 +4,12 @@
 
 Adventure-Time is a Hybrid Text Adventure RPG in which players embark on a thrilling journey through various levels, facing challenging enemies and unraveling mysteries along the way. The game is structured in levels, each presenting unique foes that the player must overcome to progress.
 
+In this game, you can navigate through all available blocks by scrolling with the mouse wheel. Place blocks with a left-click and remove them with a right-click.
+
+The game features a character with  functional movement, animations, gravity, and nearly complete collision mechanics.
+
+Additionally, if you create a level, you can save it by pressing CTRL + S, which will save your design to a file called level.txt.
+
 ### Important!
 Aveți voie cu cod generat de modele de limbaj la care nu ați contribuit semnificativ doar în folder-ul `generated`.
 Codul generat pus "ca să fie"/pe care nu îl înțelegeți se punctează doar pentru puncte bonus, doar în contextul
