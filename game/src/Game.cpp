@@ -5,14 +5,19 @@
 #include <chrono>
 
 #include "../include/Game.h"
-// #include "../include/Character.h"
-// #include "../include/Level.h"
-// #include "../include/LevelEditor.h"
+#include "../include/PropsManager.h"
+#include "../include/Exception.h"
+
+#define TILE_SIZE 16
+#define TILE_SCALE 3.0f
+
+#define WINDOW_WIDTH 800
+#define WINDOW_HEIGHT 700
 
 Game::Game()
-    : character("Player", 100, 0, 0, 3.0f), level("..//game//assets//world//back.png"), editor(level, 16, 16, 3.0f), camera(0, 0), deltaTime(0.0f), isFocused(true) {
+    : character("Player", 100, 0, 0, 3.0f), level("assets/world/back.png"), editor(level, 16, 16, 3.0f), camera(0, 0), deltaTime(0.0f), isFocused(true), ui(), dialogueBox() {
     // Load story from file
-    std::ifstream file("..//story.txt");
+    std::ifstream file("story.txt");
     if (!file.is_open()) {
         std::cerr << "Failed to open file\n";
         return;
@@ -23,94 +28,143 @@ Game::Game()
     story = buffer.str();
 }
 
-Game::Game(const Game& other)
-    : character(other.character), level(other.level), camera(other.camera), story(other.story), deltaTime(other.deltaTime), editor(other.editor) {}
-
 void Game::start() {
-    // readStory();
+    try {
+        ///////////////////////////////////////////////////////////////////////////
+        /// NOTE: sync with env variable APP_WINDOW from .github/workflows/cmake.yml:31
+        window.create(sf::VideoMode({WINDOW_WIDTH, WINDOW_HEIGHT}), "Adventure Time", sf::Style::Default);
+        ///////////////////////////////////////////////////////////////////////////
+        //
+        ///////////////////////////////////////////////////////////////////////////
+        /// NOTE: mandatory use one of vsync or FPS limit (not both)            ///
+        /// This is needed so we do not burn the GPU                            ///
+        window.setVerticalSyncEnabled(true);                                    ///
+        /// window.setFramerateLimit(60);                                       ///
+        ///////////////////////////////////////////////////////////////////////////
 
-    ///////////////////////////////////////////////////////////////////////////
-    /// NOTE: sync with env variable APP_WINDOW from .github/workflows/cmake.yml:31
-    window.create(sf::VideoMode({800, 700}), "Adventure Time", sf::Style::Default);
-    ///////////////////////////////////////////////////////////////////////////
-    //
-    ///////////////////////////////////////////////////////////////////////////
-    /// NOTE: mandatory use one of vsync or FPS limit (not both)            ///
-    /// This is needed so we do not burn the GPU                            ///
-    window.setVerticalSyncEnabled(true);                                    ///
-    /// window.setFramerateLimit(60);                                       ///
-    ///////////////////////////////////////////////////////////////////////////
+        // Init stuff
+        
+        level.loadTileset("assets/world/tileset.png", TILE_SIZE, TILE_SIZE);
 
-    // Init stuff
-    
-    level.loadTileset("..//game//assets//world//tileset.png", 16, 16);
+        // Fill the screen with empty tiles
+        int width = window.getSize().x / (TILE_SIZE * level.getTileScale()) + 1;
+        int height = window.getSize().y / (TILE_SIZE * level.getTileScale()) + 1;
+        std::vector<std::vector<int>> data(height, std::vector<int>(width, -1));
+        level.setLevelData(data);
 
-    // Fill the screen with empty tiles
-    int width = window.getSize().x / (16 * level.getTileScale()) + 1;
-    int height = window.getSize().y / (16 * level.getTileScale()) + 1;
-    std::vector<std::vector<int>> data(height, std::vector<int>(width, -1));
-    level.setLevelData(data);
-    
-    editor.updateLevelData();
+        ui.setWindowSize(window.getSize());
+        
+        editor.updateLevelData();
 
-    while(window.isOpen()) {
-        bool shouldExit = false;
-        sf::Event e{};
-        while(window.pollEvent(e)) {
-            switch(e.type) {
-            case sf::Event::Closed:
+        // Load props
+        PropsManager::loadProp("sign", "assets/props/sign.png");
+        PropsManager::loadProp("cherry", "assets/props/cherry.png");
+
+        // Set the window and tile size for the PropsManager
+        PropsManager::setWindow(window);
+        PropsManager::setTileSize(TILE_SIZE, TILE_SIZE, TILE_SCALE);
+
+        // Load level data
+        level.loadLevelData("assets/levels/level2.txt");
+        editor.updateLevelData();
+
+        character.update(0, level.getLevelData(), level.getCollisionData(), level.getTileWidth(), level.getTileHeight());
+
+        // Load enemy and clone it
+        Enemy enemy("Enemy", 100, 100);
+        enemies.push_back(enemy);
+        enemies.push_back(*dynamic_cast<Enemy*>(enemy.clone()));
+        enemies.push_back(*dynamic_cast<Enemy*>(enemy.clone()));
+
+        // Start the game loop
+        while(window.isOpen()) {
+            bool shouldExit = false;
+            sf::Event e{};
+            while(window.pollEvent(e)) {
+                switch(e.type) {
+                case sf::Event::Closed:
+                    window.close();
+                    break;
+                case sf::Event::Resized:
+                    std::cout << "New width: " << window.getSize().x << '\n'
+                            << "New height: " << window.getSize().y << '\n';
+                    level.updateBackgroundScale(window);
+                    break;
+                case sf::Event::LostFocus:
+                    isFocused = false;
+                    break;
+                case sf::Event::GainedFocus:
+                    isFocused = true;
+                    break;
+                case sf::Event::KeyPressed:
+                    if(e.key.code == sf::Keyboard::Escape)
+                        shouldExit = true;
+                    break;
+                case sf::Event::MouseWheelScrolled:
+                    editor.handleMouseScroll(e.mouseWheelScroll);
+                    break;
+                default:
+                    break;
+                }
+            }
+            if(shouldExit) {
                 window.close();
                 break;
-            case sf::Event::Resized:
-                std::cout << "New width: " << window.getSize().x << '\n'
-                          << "New height: " << window.getSize().y << '\n';
-                level.updateBackgroundScale(window);
-                break;
-            case sf::Event::LostFocus:
-                isFocused = false;
-                break;
-            case sf::Event::GainedFocus:
-                isFocused = true;
-                break;
-            case sf::Event::KeyPressed:
-                // std::cout << "Received key " << (e.key.code == sf::Keyboard::X ? "X" : "(other)") << "\n";
-                if(e.key.code == sf::Keyboard::Escape)
-                    shouldExit = true;
-                break;
-            case sf::Event::MouseWheelScrolled:
-                editor.handleMouseScroll(e.mouseWheelScroll);
-                break;
-            default:
-                break;
+            }
+
+            if (isFocused) {
+                deltaTime = clock.restart().asSeconds();
+
+                update();
+                handleInput();
+                render();
+            } else {
+                clock.restart();
             }
         }
-        if(shouldExit) {
-            window.close();
-            break;
-        }
-
-        if (isFocused) {
-            deltaTime = clock.restart().asSeconds();
-
-            handleInput();
-            update();
-            render();
-        } else {
-            clock.restart();
-        }
+    } catch (const GameException& e) {
+        std::cerr << "Game Exception: " << e.what() << '\n';
+    } catch (const std::exception& e) {
+        std::cerr << "Exception: " << e.what() << '\n';
+    } catch (...) {
+        std::cerr << "Unknown exception\n";
     }
 }
 
 void Game::update() {
     character.update(deltaTime, level.getLevelData(), level.getCollisionData(), level.getTileWidth(), level.getTileHeight());
     // camera.follow(character.getX(), character.getY());
+    for (auto& enemy : enemies) {
+        enemy.update(deltaTime);
+    }
+    // Check for collisions with props
+    for (const auto& prop : PropsManager::getPropInstances()) {
+        if (character.getHitbox().intersects(prop.sprite.getGlobalBounds())) {
+            if (prop.name == "cherry") {
+                // Pick up cherry
+                PropsManager::removePropInstance(prop.sprite.getPosition().x, prop.sprite.getPosition().y);
+                ui.updateCherries(ui.getCherryCount() + 1);
+            } else if (prop.name == "sign") {
+                // Show dialogue box
+                if (!dialogueBox.isVisible()) {
+                    dialogueBox.show("This is a sign!");
+                }
+            }
+        } else 
+            dialogueBox.hide();
+    }
+
+    dialogueBox.update(deltaTime);
 }
 
 void Game::render() {
     window.clear();
     // level.render(window);
     editor.render(window);
+    PropsManager::renderProps(window);
     character.render(window);
+    dialogueBox.render(window);
+    ui.render(window);
     window.display();
 }
 
@@ -127,18 +181,36 @@ void Game::handleInput() {
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
         dx += speed;
     }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::E)) {
+        character.attack();
+    }
 
     character.move(dx, dy);
     
     editor.handleInput(window);
-}
+    
+    // if C is pressed add a cherry prop
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::C)) {
+        PropsManager::addPropInstance("cherry", 2.5f);
+    }
 
-void Game::readStory() {
-    for (char c : story) {
-        std::cout << c << std::flush;
-        std::this_thread::sleep_for(std::chrono::milliseconds(30));
+    // if V is pressed add a sign prop
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::V)) {
+        PropsManager::addPropInstance("sign", 2.5f);
+    }
+
+    // if B is pressed remove a prop at mouse position
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::B)) {
+        PropsManager::removePropInstance();
     }
 }
+
+// void Game::readStory() {
+//     for (char c : story) {
+//         std::cout << c << std::flush;
+//         std::this_thread::sleep_for(std::chrono::milliseconds(30));
+//     }
+// }
 
 std::ostream& operator<<(std::ostream& os, const Game& game) {
     os << "Game(" << game.character << ", " << game.level << ", " << game.camera << ")";

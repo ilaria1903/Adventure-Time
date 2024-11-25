@@ -42,11 +42,16 @@ add_executable(${PROJECT_NAME}
         main.cpp
         generated/src/Helper.cpp
         game/src/Camera.cpp
-        game/src/Character.cpp
+        game/src/Player.cpp
         game/src/Level.cpp
         game/src/Game.cpp
         game/src/LevelEditor.cpp
         env_fixes.h
+        game/src/Entity.cpp
+        game/src/Interface.cpp
+        game/src/DialogueBox.cpp
+        game/src/PropsManager.cpp
+        game/src/Player.cpp
 )
 
 # Include compiler flags

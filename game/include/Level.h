@@ -9,7 +9,8 @@
 
 class Level {
 public:
-    Level(const std::string& backgroundFile);
+    Level();
+    explicit Level(const std::string& backgroundFile);
     void loadTileset(const std::string& tilesetFile, int tileWidth, int tileHeight);
     void setLevelData(const std::vector<std::vector<int>>& data);
     void render(sf::RenderWindow& window);
@@ -19,14 +20,14 @@ public:
     void saveLevelData(const std::string& filename);
     void loadLevelData(const std::string& filename);
 
-    void showTilesetWithGrid();
+    // void showTilesetWithGrid();
 
     double getTileScale() const;
-    std::vector<std::vector<int>> getLevelData() const;
-    std::vector<CollisionType> getCollisionData() const;
+    const std::vector<std::vector<int>>& getLevelData() const;
+    const std::vector<CollisionType>& getCollisionData() const;
+    const std::vector<sf::Sprite>& getTiles() const;
     int getTileWidth() const;
     int getTileHeight() const;
-    std::vector<sf::Sprite> getTiles() const;
 
     friend std::ostream& operator<<(std::ostream& os, const Level& level);
 

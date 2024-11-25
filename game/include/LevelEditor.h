@@ -9,7 +9,7 @@ public:
     LevelEditor(Level& level, int tileWidth, int tileHeight, float tileScale);
     LevelEditor(const LevelEditor& other) = default;
     void handleInput(sf::RenderWindow& window);
-    void handleMouseScroll(sf::Event::MouseWheelScrollEvent& scrollEvent);
+    void handleMouseScroll(const sf::Event::MouseWheelScrollEvent& scrollEvent);
     void render(sf::RenderWindow& window);
     void updateLevelData();
 
@@ -18,13 +18,13 @@ private:
     int tileWidth;
     int tileHeight;
     float tileScale;
-    int currentTileIndex;
+    size_t currentTileIndex;
     std::vector<std::vector<int>> levelData;
     std::vector<sf::Sprite> tiles;
     sf::RectangleShape gridCell;
     sf::Sprite currentTileSprite;
 
-    void drawGrid(sf::RenderWindow& window);
+    // void drawGrid(sf::RenderWindow& window);
     void updateCurrentTileSprite();
 };
 

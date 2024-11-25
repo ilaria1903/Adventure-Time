@@ -1,8 +1,37 @@
-# Adventure-Time
+# Adventure Time
 
 ### Descriere
 
-Adventure-Time is a Hybrid Text Adventure RPG in which players embark on a thrilling journey through various levels, facing challenging enemies and unraveling mysteries along the way. The game is structured in levels, each presenting unique foes that the player must overcome to progress.
+Adventure-Time is a Hybrid Text Adventure RPG where players embark on a thrilling journey through various levels, facing challenging enemies and unraveling mysteries along the way. Each level offers unique foes, puzzles, and opportunities for creativity as you progress through the game.
+
+The gameplay includes advanced mechanics for level creation and interaction:
+
+- Navigate through available blocks by scrolling with the mouse wheel.
+- Place blocks with a left-click and remove them with a right-click.
+- Create your own levels and save them by pressing CTRL + S, saving your design to a file named level.txt.
+Features:
+
+- Dynamic Levels: The game starts with the preloaded level "level2.txt", setting the stage for exploration and creativity.
+- Character Animations and Actions:
+The character features functional movement, animations, and gravity mechanics, with nearly complete collision handling for platforms and surrounding blocks.
+Press E to trigger an attack animation (future updates will enable actual attacks when enemies are added).
+- Tile Interactions:
+Add cherries anywhere in the level by pressing C. These cherries serve as collectible items that contribute to the player's score, displayed in the top-left corner of the screen.
+Add story signs using V. These signs currently display a generic message but will expand to narrate the storyline as you progress.
+Remove cherries or signs by pressing B.
+- Health and Score:
+A health bar is displayed in the top-right corner, ready for combat interactions in future updates.
+The score is based on cherries collected in the level.
+- Level Editor:
+Design your levels on the go, placing tiles with the left mouse button and erasing them with the right mouse button.
+Save your work for future gameplay!
+Technical Highlights:
+ 
+- Advanced Programming Features:
+Exceptions are implemented for robust error handling.
+The game uses inheritance with pure virtual functions for flexible and reusable class designs.
+The PropsManager class utilizes static attributes to manage props efficiently across the game.
+Adventure-Time is not just a game but also a canvas for creativity and storytelling, blending platforming mechanics with narrative-driven gameplay.
 
 ### Important!
 Aveți voie cu cod generat de modele de limbaj la care nu ați contribuit semnificativ doar în folder-ul `generated`.
@@ -43,10 +72,10 @@ O cerință nu se consideră îndeplinită dacă este realizată doar ca o serie
 
 #### Cerințe
 - [x] separarea codului din clase în `.h` (sau `.hpp`) și `.cpp`
-- [ ] moșteniri:
+- [x] moșteniri:
   - minim o clasă de bază și **3 clase derivate** din aceeași ierarhie
   - ierarhia trebuie să fie cu bază proprie, nu derivată dintr-o clasă predefinită
-  - [ ] funcții virtuale (pure) apelate prin pointeri de bază din clasa care conține atributul de tip pointer de bază
+  - [x] funcții virtuale (pure) apelate prin pointeri de bază din clasa care conține atributul de tip pointer de bază
     - minim o funcție virtuală va fi **specifică temei** (e.g. nu simple citiri/afișări)
     - constructori virtuali (clone): sunt necesari, dar nu se consideră funcții specifice temei
     - afișare virtuală, interfață non-virtuală
@@ -55,14 +84,14 @@ O cerință nu se consideră îndeplinită dacă este realizată doar ca o serie
     - [ ] suprascris cc/op= pentru copieri/atribuiri corecte, copy and swap
     - [ ] `dynamic_cast`/`std::dynamic_pointer_cast` pentru downcast cu sens
     - [ ] smart pointers (recomandat, opțional)
-- [ ] excepții
-  - [ ] ierarhie proprie cu baza `std::exception` sau derivată din `std::exception`; minim **3** clase pentru erori specifice
-  - [ ] utilizare cu sens: de exemplu, `throw` în constructor (sau funcție care întoarce un obiect), `try`/`catch` în `main`
+- [x] excepții
+  - [x] ierarhie proprie cu baza `std::exception` sau derivată din `std::exception`; minim **3** clase pentru erori specifice
+  - [x] utilizare cu sens: de exemplu, `throw` în constructor (sau funcție care întoarce un obiect), `try`/`catch` în `main`
   - această ierarhie va fi complet independentă de ierarhia cu funcții virtuale
-- [ ] funcții și atribute `static`
+- [x] funcții și atribute `static`
 - [ ] STL
-- [ ] cât mai multe `const`
-- [ ] funcții *de nivel înalt*, de eliminat cât mai mulți getters/setters/funcții low-level
+- [x] cât mai multe `const`
+- [x] funcții *de nivel înalt*, de eliminat cât mai mulți getters/setters/funcții low-level
 - [ ] la sfârșit: commit separat cu adăugarea unei noi clase derivate fără a modifica restul codului, **pe lângă cele 3 derivate deja adăugate** din aceeași ierarhie
   - noua derivată nu poate fi una existentă care a fost ștearsă și adăugată din nou
 - [ ] tag de `git`: de exemplu `v0.2`

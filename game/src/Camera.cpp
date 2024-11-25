@@ -8,8 +8,8 @@ Camera::Camera(const Camera& other)
 
 void Camera::follow(int targetX, int targetY) {
     this->x = targetX;
-    this->y = targetY;
-}
+   this->y = targetY;
+ }
 
 void Camera::setPosition(int newX, int newY) {
     this->x = newX;

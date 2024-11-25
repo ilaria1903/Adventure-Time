@@ -1,10 +1,12 @@
 #ifndef GAME_H
 #define GAME_H
 
-#include "Character.h"
+#include "Player.h"
 #include "Level.h"
 #include "Camera.h"
 #include "LevelEditor.h"
+#include "Interface.h"
+#include "DialogueBox.h"
 
 #include <iostream>
 #include <array>
@@ -18,18 +20,17 @@ using namespace std::chrono_literals;
 class Game {
 public:
     Game();
-    Game(const Game& other);
 
     void start();
     void update();
     void render();
     void handleInput();
-    void readStory();
+    // void readStory();
 
     friend std::ostream& operator<<(std::ostream& os, const Game& game);
 
 private:
-    Character character;
+    Player character;
     Level level;
     LevelEditor editor;
     Camera camera;
@@ -38,6 +39,9 @@ private:
     sf::Clock clock;
     float deltaTime;
     bool isFocused;
+    Interface ui;
+    DialogueBox dialogueBox;
+    std::vector<Enemy> enemies;
 };
 
 #endif // GAME_H

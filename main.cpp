@@ -5,7 +5,7 @@
 
 #include "game/include/Game.h"
 #include "game/include/Level.h"
-#include "game/include/Character.h"
+#include "game/include/Player.h"
 #include "game/include/Camera.h"
 
 //////////////////////////////////////////////////////////////////////
@@ -18,14 +18,14 @@
 
 //////////////////////////////////////////////////////////////////////
 /// This class is used to test that the memory leak checks work as expected even when using a GUI
-class SomeClass {
-public:
-    explicit SomeClass(int) {}
-};
+//class SomeClass {
+///public:
+ //   explicit SomeClass(int) {}
+//};
 
-SomeClass *getC() {
-    return new SomeClass{2};
-}
+//SomeClass *getC() {
+   // return new SomeClass{2};
+//}
 //////////////////////////////////////////////////////////////////////
 
 

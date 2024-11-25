@@ -1,4 +1,5 @@
 #include "../include/LevelEditor.h"
+// #include "../include/PropsManager.h"
 
 LevelEditor::LevelEditor(Level& level, int tileWidth, int tileHeight, float tileScale)
     : level(level), tileWidth(tileWidth), tileHeight(tileHeight), tileScale(tileScale), currentTileIndex(0) {
@@ -8,16 +9,17 @@ LevelEditor::LevelEditor(Level& level, int tileWidth, int tileHeight, float tile
     gridCell.setOutlineThickness(1.0f);
 }
 
-void LevelEditor::handleMouseScroll(sf::Event::MouseWheelScrollEvent& scrollEvent) {
+void LevelEditor::handleMouseScroll(const sf::Event::MouseWheelScrollEvent& scrollEvent) {
     if (scrollEvent.delta > 0) {
         currentTileIndex++;
         if (currentTileIndex >= level.getTiles().size()) {
             currentTileIndex = 0;
         }
     } else if (scrollEvent.delta < 0) {
-        currentTileIndex--;
-        if (currentTileIndex < 0) {
+        if (currentTileIndex == 0) {
             currentTileIndex = level.getTiles().size() - 1;
+        } else {
+            currentTileIndex--;
         }
     }
 
@@ -30,11 +32,11 @@ void LevelEditor::handleInput(sf::RenderWindow& window) {
     int gridY = mousePos.y / (tileHeight * tileScale);
 
     if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-        if (gridX >= 0 && gridX < levelData[0].size() && gridY >= 0 && gridY < levelData.size()) {
+        if (gridX >= 0 && gridX < (int)levelData[0].size() && gridY >= 0 && gridY < (int)levelData.size()) {
             levelData[gridY][gridX] = currentTileIndex;
         }
     } else if (sf::Mouse::isButtonPressed(sf::Mouse::Right)) {
-        if (gridX >= 0 && gridX < levelData[0].size() && gridY >= 0 && gridY < levelData.size()) {
+        if (gridX >= 0 && gridX < (int)levelData[0].size() && gridY >= 0 && gridY < (int)levelData.size()) {
             levelData[gridY][gridX] = -1;
         }
     }
@@ -55,28 +57,28 @@ void LevelEditor::render(sf::RenderWindow& window) {
     level.render(window);
     
     // Draw the current tile sprite at the mouse position over the level
-    if (gridX >= 0 && gridX < levelData[0].size() && gridY >= 0 && gridY < levelData.size()) {
+    if (gridX >= 0 && gridX < (int)levelData[0].size() && gridY >= 0 && gridY < (int)levelData.size()) {
         currentTileSprite.setPosition(gridX * tileWidth * tileScale, gridY * tileHeight * tileScale);
         window.draw(currentTileSprite);
     }
-    drawGrid(window);
+    // drawGrid(window);
 }
 
-void LevelEditor::drawGrid(sf::RenderWindow& window) {
-    for (int y = 0; y < levelData.size(); ++y) {
-        for (int x = 0; x < levelData[y].size(); ++x) {
-            gridCell.setPosition(x * tileWidth * tileScale, y * tileHeight * tileScale);
-            window.draw(gridCell);
-        }
-    }
-}
+// void LevelEditor::drawGrid(sf::RenderWindow& window) {
+//     for (int y = 0; y < levelData.size(); ++y) {
+//         for (int x = 0; x < levelData[y].size(); ++x) {
+//             gridCell.setPosition(x * tileWidth * tileScale, y * tileHeight * tileScale);
+//             window.draw(gridCell);
+//         }
+//     }
+// }
 
 void LevelEditor::updateLevelData() {
     levelData = level.getLevelData();
 }
 
 void LevelEditor::updateCurrentTileSprite() {
-    if (currentTileIndex >= 0 && currentTileIndex < level.getTiles().size()) {
+    if (currentTileIndex < level.getTiles().size()) {
         currentTileSprite = level.getTiles()[currentTileIndex];
         currentTileSprite.setScale(tileScale, tileScale);
     }

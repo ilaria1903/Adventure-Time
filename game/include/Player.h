@@ -10,38 +10,45 @@
 #include <chrono>
 
 #include "../include/CollisionType.h"
+#include "../include/Entity.h"
 
-class Character {
+class Player : public Entity {
 public:
     enum class State {
         Idle,
         Running,
-        Jumping
+        Jumping,
+        Attacking
     };
 
-    Character(const std::string& name, int health, int x, int y, float scale = 1.0f);
-    Character(const Character& other);
-    Character& operator=(const Character& other);
-    ~Character();
+    Player(const std::string& name, int health, int x, int y, float scale = 1.0f);
+    Player(const Player& other);
+    Player& operator=(const Player& other);
+    ~Player() override;
 
     void jump();
     void move(float dx, float dy);
-    void takeDamage(int amount);
-    void heal(int amount);
-    void update(float deltaTime, const std::vector<std::vector<int>>& levelData, const std::vector<CollisionType>& collisionData, int tileWidth, int tileHeight);
-    void render(sf::RenderWindow& window);
+    // void takeDamage(int amount);
+    // void heal(int amount);
+    void attack();
+    void update(float deltaTime) override;
+    void update(float deltaTime, const std::vector<std::vector<int>>& levelData, const std::vector<CollisionType>& collisionData, int tileWidth, int tileHeight) override;
+    Entity* clone() const override;
+    void render(sf::RenderWindow& window) override;
 
-    int getX() const { return x; }
-    int getY() const { return y; }
+    // int getX() const { return x; }
+    // int getY() const { return y; }
 
     const sf::FloatRect getHitbox() const;
+    // State getState() const { return state; }
 
-    friend std::ostream& operator<<(std::ostream& os, const Character& character);
+    // void setHealth(int health) { this->health = health; }
+    // int getHealth() const { return health; }
+
+    friend std::ostream& operator<<(std::ostream& os, const Player& character);
 
 private:
-    std::string name;
     int health;
-    int x, y;
     State state;
     float scale;
     bool facingRight;
@@ -50,21 +57,27 @@ private:
     sf::Texture idleTexture;
     sf::Texture jumpTexture;
     sf::Texture runTexture;
+    sf::Texture attackTexture;
 
     std::vector<sf::Sprite> idleSprites;
     std::vector<sf::Sprite> jumpSprites;
     std::vector<sf::Sprite> runSprites;
+    std::vector<sf::Sprite> attackSprites;
+
+    sf::Sprite slashSprite;
 
     int currentFrame;
     float frameTime;
     float elapsedTime;
-
+    float lastAttackTime;
     float velocityX;
     float velocityY;
     float gravity;
     int jumpCount;
-    const int maxJumps = 2;
-    float maxFallSpeed = 800.0f;
+    int maxJumps;
+    float maxFallSpeed;
+
+    sf::RectangleShape rect1, rect2;
 
     std::chrono::time_point<std::chrono::steady_clock> lastJumpTime;
 
@@ -72,7 +85,7 @@ private:
     void updateAnimation(float deltaTime);
     void applyGravity(float deltaTime);
     void handleCollisions(const std::vector<std::vector<int>>& levelData, const std::vector<CollisionType>& collisionData, int tileWidth, int tileHeight);
-    void drawHitbox(sf::RenderWindow& window);
+    // void drawHitbox(sf::RenderWindow& window);
 };
 
 #endif // CHARACTER_H
