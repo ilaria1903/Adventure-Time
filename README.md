@@ -33,6 +33,12 @@ The game uses inheritance with pure virtual functions for flexible and reusable 
 The PropsManager class utilizes static attributes to manage props efficiently across the game.
 Adventure-Time is not just a game but also a canvas for creativity and storytelling, blending platforming mechanics with narrative-driven gameplay.
 
+In this game, you can navigate through all available blocks by scrolling with the mouse wheel. Place blocks with a left-click and remove them with a right-click.
+
+The game features a character with  functional movement, animations, gravity, and nearly complete collision mechanics.
+
+Additionally, if you create a level, you can save it by pressing CTRL + S, which will save your design to a file called level.txt.
+
 ### Important!
 Aveți voie cu cod generat de modele de limbaj la care nu ați contribuit semnificativ doar în folder-ul `generated`.
 Codul generat pus "ca să fie"/pe care nu îl înțelegeți se punctează doar pentru puncte bonus, doar în contextul
