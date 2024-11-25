@@ -6,10 +6,10 @@ Camera::Camera(int x, int y)
 Camera::Camera(const Camera& other)
     : x(other.x), y(other.y) {}
 
-void Camera::follow(int targetX, int targetY) {
-    this->x = targetX;
-   this->y = targetY;
- }
+//void Camera::follow(int targetX, int targetY) {
+//    this->x = targetX;
+//   this->y = targetY;
+// }
 
 void Camera::setPosition(int newX, int newY) {
     this->x = newX;
