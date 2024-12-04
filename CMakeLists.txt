@@ -94,3 +94,4 @@ include(cmake/CopyHelper.cmake)
 copy_files(FILES tastatura.txt)
 # Additional resource directories can be copied like this:
 # copy_files(FILES tastatura.txt config.json DIRECTORY images sounds)
+copy_files(DIRECTORY assets)
