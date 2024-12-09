@@ -24,9 +24,9 @@ void Camera::startFollowing(const sf::Vector2f& newTarget) {
     isFollowing = true;
 }
 
-void Camera::stopFollowing() {
-    isFollowing = false;
-}
+//void Camera::stopFollowing() {
+ //   isFollowing = false;
+//}
 
 void Camera::apply(sf::RenderWindow& window) {
     window.setView(view);
