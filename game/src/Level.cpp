@@ -135,9 +135,23 @@ const std::vector<sf::Sprite>& Level::getTiles() const {
 }
 
 void Level::render(sf::RenderWindow& window) {
-    backgroundSprite.setScale(backgroundScale, backgroundScale);
-    window.draw(backgroundSprite);
+    sf::Vector2f viewCenter = window.getView().getCenter();
+    sf::Vector2f viewSize = window.getView().getSize();
+    sf::FloatRect viewRect(viewCenter - viewSize / 2.0f, viewSize);
 
+    // Calculate parallax offset
+    float parallaxFactor = 0.5f; // Adjust this value to control the parallax effect
+    float parallaxOffsetX = viewCenter.x * parallaxFactor;
+
+    backgroundSprite.setScale(backgroundScale, backgroundScale);
+
+    // Draw background tiles with parallax effect
+    for (float x = viewRect.left - parallaxOffsetX; x < viewRect.left + viewRect.width; x += backgroundTexture.getSize().x * backgroundScale) {
+        backgroundSprite.setPosition(x, 0);
+        window.draw(backgroundSprite);
+    }
+
+    // Draw level tiles
     for (size_t y = 0; y < levelData.size(); ++y) {
         for (size_t x = 0; x < levelData[y].size(); ++x) {
             int tileIndex = levelData[y][x];
@@ -165,6 +179,18 @@ void Level::updateBackgroundScale(const sf::RenderWindow& window) {
     std::cout << "scale: " << backgroundScale << '\n';
 
     backgroundSprite.setScale(backgroundScale, backgroundScale);
+}
+
+void Level::expandLevel(int additionalColumns) {
+    for (auto& row : levelData) {
+        row.insert(row.end(), additionalColumns, -1); // Add empty tiles
+    }
+
+    // Add solid tiles to the bottom of the level
+    int lastRowIndex = levelData.size() - 1;
+    for (int i = 0; i < additionalColumns; ++i) {
+        levelData[lastRowIndex][levelData[lastRowIndex].size() - additionalColumns + i] = 24;
+    }
 }
 
 double Level::getTileScale() const {

@@ -13,6 +13,8 @@ public:
     void render(sf::RenderWindow& window);
     void updateLevelData();
 
+    int getTileIndex(float x, float y) const;
+
 private:
     Level& level;
     int tileWidth;

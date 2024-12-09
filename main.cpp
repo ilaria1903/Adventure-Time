@@ -1,12 +1,7 @@
-#include <SFML/Graphics.hpp>
-
 #include <Helper.h>
 #include <locale>
 
 #include "game/include/Game.h"
-#include "game/include/Level.h"
-#include "game/include/Player.h"
-#include "game/include/Camera.h"
 
 //////////////////////////////////////////////////////////////////////
 /// NOTE: this include is needed for environment-specific fixes     //
@@ -18,14 +13,14 @@
 
 //////////////////////////////////////////////////////////////////////
 /// This class is used to test that the memory leak checks work as expected even when using a GUI
-//class SomeClass {
-///public:
- //   explicit SomeClass(int) {}
-//};
+// class SomeClass {
+// public:
+//     explicit SomeClass(int) {}
+// };
 
-//SomeClass *getC() {
-   // return new SomeClass{2};
-//}
+// SomeClass *getC() {
+//     return new SomeClass{2};
+// }
 //////////////////////////////////////////////////////////////////////
 
 

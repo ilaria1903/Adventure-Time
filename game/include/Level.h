@@ -19,6 +19,7 @@ public:
 
     void saveLevelData(const std::string& filename);
     void loadLevelData(const std::string& filename);
+    void expandLevel(int additionalColumns);
 
     // void showTilesetWithGrid();
 

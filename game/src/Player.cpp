@@ -400,9 +400,17 @@ void Player::handleCollisions(const std::vector<std::vector<int>>& levelData, co
 
     // Check if player is out of bounds
     if (x < -200.0f) throw PlayerOutOfBoundsException("Player is out of bounds to the left");
-    else if (x > 800.0f) throw PlayerOutOfBoundsException("Player is out of bounds to the right");
+    else if (x > 8000.0f) throw PlayerOutOfBoundsException("Player is out of bounds to the right");
 
     // lastVelocityY = velocityY;
+}
+
+const sf::Vector2f Player::getPosition() const {
+    return sf::Vector2f(x, y);
+}
+
+const sf::Vector2f Player::getVelocity() const {
+    return sf::Vector2f(velocityX, velocityY);
 }
 
 void Player::applyGravity(float _deltaTime) {

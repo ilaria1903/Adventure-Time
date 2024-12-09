@@ -7,6 +7,7 @@
 #include "LevelEditor.h"
 #include "Interface.h"
 #include "DialogueBox.h"
+#include "PropsManager.h"
 
 #include <iostream>
 #include <array>
@@ -42,6 +43,7 @@ private:
     Interface ui;
     DialogueBox dialogueBox;
     std::vector<Enemy> enemies;
+    PropsManager propsManager;
 };
 
 #endif // GAME_H

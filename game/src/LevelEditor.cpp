@@ -83,3 +83,14 @@ void LevelEditor::updateCurrentTileSprite() {
         currentTileSprite.setScale(tileScale, tileScale);
     }
 }
+
+int LevelEditor::getTileIndex(float _x, float _y) const {
+    int x = _x / (tileWidth * tileScale);
+    int y = _y / (tileHeight * tileScale);
+
+    if (x >= 0 && x < (int)levelData[0].size() && y >= 0 && y < (int)levelData.size()) {
+        return levelData[y][x];
+    }
+
+    return -1;
+}

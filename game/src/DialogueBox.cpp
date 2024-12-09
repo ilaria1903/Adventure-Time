@@ -33,7 +33,13 @@ void DialogueBox::render(sf::RenderWindow& window) {
     }
 }
 
-void DialogueBox::update(float deltaTime) {
+void DialogueBox::update(float deltaTime, const sf::View& cameraView) {
+    // Update the position of the dialogue box based on the camera's position
+    sf::Vector2f cameraCenter = cameraView.getCenter();
+    sf::Vector2f cameraSize = cameraView.getSize();
+    sf::Vector2f newPosition(cameraCenter.x - cameraSize.x / 2 + 50, cameraCenter.y + cameraSize.y / 2 - 150);
+    background.setPosition(newPosition);
+    text.setPosition(newPosition);
     if (visible && currentCharIndex < message.length()) {
         timeSinceLastChar += deltaTime;
         if (timeSinceLastChar >= charDisplayInterval) {

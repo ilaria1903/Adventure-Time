@@ -1,20 +1,27 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
-#include <iostream>
+#include <SFML/Graphics.hpp>
 
 class Camera {
 public:
-    Camera(int x, int y);
-    Camera(const Camera& other);
+    Camera(float width, float height);
+    void startFollowing(const sf::Vector2f& newTarget);
+    void stopFollowing();
+    void update(float deltaTime, sf::Vector2f target);
+    void apply(sf::RenderWindow& window);
 
-     void follow(int targetX, int targetY);
-    void setPosition(int x, int y);
+    sf::Vector2f getPosition() const { return view.getCenter(); }
+    sf::View getView() const { return view; }
 
     friend std::ostream& operator<<(std::ostream& os, const Camera& camera);
 
 private:
-    int x, y;
+    sf::View view;
+    sf::Vector2f target;
+    bool isFollowing;
+    float maxSpeed;
+    float acceleration;
 };
 
 #endif // CAMERA_H

@@ -5,7 +5,7 @@
 #include <chrono>
 
 #include "../include/Game.h"
-#include "../include/PropsManager.h"
+// #include "../include/PropsManager.h"
 #include "../include/Exception.h"
 
 #define TILE_SIZE 16
@@ -15,7 +15,7 @@
 #define WINDOW_HEIGHT 700
 
 Game::Game()
-    : character("Player", 100, 0, 0, 3.0f), level("assets/world/back.png"), editor(level, 16, 16, 3.0f), camera(0, 0), deltaTime(0.0f), isFocused(true), ui(), dialogueBox() {
+    : character("Player", 100, 0, 0, 3.0f), level("assets/world/back.png"), editor(level, 16, 16, 3.0f), camera(WINDOW_WIDTH, WINDOW_HEIGHT), deltaTime(0.0f), isFocused(true), ui(), dialogueBox() {
     // Load story from file
     std::ifstream file("story.txt");
     if (!file.is_open()) {
@@ -57,24 +57,30 @@ void Game::start() {
         editor.updateLevelData();
 
         // Load props
-        PropsManager::loadProp("sign", "assets/props/sign.png");
-        PropsManager::loadProp("cherry", "assets/props/cherry.png");
+        propsManager.loadProp("sign", "assets/props/sign.png");
+        propsManager.loadProp("cherry", "assets/props/cherry.png");
 
         // Set the window and tile size for the PropsManager
-        PropsManager::setWindow(window);
-        PropsManager::setTileSize(TILE_SIZE, TILE_SIZE, TILE_SCALE);
+        propsManager.setWindow(window);
+        propsManager.setTileSize(TILE_SIZE, TILE_SIZE, TILE_SCALE);
 
         // Load level data
         level.loadLevelData("assets/levels/level2.txt");
         editor.updateLevelData();
 
         character.update(0, level.getLevelData(), level.getCollisionData(), level.getTileWidth(), level.getTileHeight());
+        camera.startFollowing(character.getPosition());
 
         // Load enemy and clone it
         Enemy enemy("Enemy", 100, 100);
         enemies.push_back(enemy);
-        enemies.push_back(*dynamic_cast<Enemy*>(enemy.clone()));
-        enemies.push_back(*dynamic_cast<Enemy*>(enemy.clone()));
+
+        // Cast cu sens
+        // enemies.push_back(*dynamic_cast<Enemy*>(enemy.clone()));
+        // enemies.push_back(*dynamic_cast<Enemy*>(enemy.clone()));
+
+        enemies.push_back(enemy);
+        enemies.push_back(enemy);
 
         // Start the game loop
         while(window.isOpen()) {
@@ -133,16 +139,32 @@ void Game::start() {
 
 void Game::update() {
     character.update(deltaTime, level.getLevelData(), level.getCollisionData(), level.getTileWidth(), level.getTileHeight());
-    // camera.follow(character.getX(), character.getY());
+    
+    // Check if the player is approaching the edge of the currently loaded level data
+    const int expansionThreshold = 1; // Number of tiles from the edge to trigger expansion
+    const int expansionAmount = 10; // Number of columns to expand
+
+    sf::Vector2f playerPos = character.getPosition();
+    int playerTileX = playerPos.x / level.getTileWidth();
+    int levelWidth = level.getLevelData()[0].size();
+
+    if (playerTileX > levelWidth - expansionThreshold) {
+        level.expandLevel(expansionAmount);
+        editor.updateLevelData();
+    }
+
+    // Update camera position
+    camera.update(deltaTime, playerPos);
+
     for (auto& enemy : enemies) {
         enemy.update(deltaTime);
     }
     // Check for collisions with props
-    for (const auto& prop : PropsManager::getPropInstances()) {
+    for (const auto& prop : propsManager.getPropInstances()) {
         if (character.getHitbox().intersects(prop.sprite.getGlobalBounds())) {
             if (prop.name == "cherry") {
                 // Pick up cherry
-                PropsManager::removePropInstance(prop.sprite.getPosition().x, prop.sprite.getPosition().y);
+                propsManager.removePropInstance(prop.sprite.getPosition().x, prop.sprite.getPosition().y);
                 ui.updateCherries(ui.getCherryCount() + 1);
             } else if (prop.name == "sign") {
                 // Show dialogue box
@@ -154,16 +176,18 @@ void Game::update() {
             dialogueBox.hide();
     }
 
-    dialogueBox.update(deltaTime);
+    dialogueBox.update(deltaTime, camera.getView());
 }
 
 void Game::render() {
     window.clear();
     // level.render(window);
+    camera.apply(window);
     editor.render(window);
-    PropsManager::renderProps(window);
+    propsManager.renderProps(window);
     character.render(window);
     dialogueBox.render(window);
+    window.setView(window.getDefaultView());
     ui.render(window);
     window.display();
 }
@@ -189,19 +213,32 @@ void Game::handleInput() {
     
     editor.handleInput(window);
     
+    // Convert mouse position to world coordinates
+    sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+
+    // Get player position
+    sf::Vector2f playerPos = character.getPosition();
+
+    // Add X player position to mouse position
+    sf::Vector2f adjustedPos = sf::Vector2f(mousePos.x + playerPos.x - window.getSize().x / 2, mousePos.y);
+
+    // DEBUG
+    // Check current tile index at mouse position
+    std::cout << "Tile index: " << editor.getTileIndex(adjustedPos.x, adjustedPos.y) << '\n';
+
     // if C is pressed add a cherry prop
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::C)) {
-        PropsManager::addPropInstance("cherry", 2.5f);
+        propsManager.addPropInstance("cherry", 2.5f, adjustedPos.x, adjustedPos.y);
     }
 
     // if V is pressed add a sign prop
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::V)) {
-        PropsManager::addPropInstance("sign", 2.5f);
+        propsManager.addPropInstance("sign", 2.5f, adjustedPos.x, adjustedPos.y);
     }
 
     // if B is pressed remove a prop at mouse position
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::B)) {
-        PropsManager::removePropInstance();
+        propsManager.removePropInstance(adjustedPos.x, adjustedPos.y);
     }
 }
 

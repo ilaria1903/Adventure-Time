@@ -8,7 +8,7 @@ class DialogueBox {
 public:
     DialogueBox();
     void show(const std::string& msg);
-    void update(float deltaTime);
+    void update(float deltaTime, const sf::View& cameraView);
     void hide();
     void render(sf::RenderWindow& window);
 

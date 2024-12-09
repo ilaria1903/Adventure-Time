@@ -2,6 +2,7 @@
 #include "../include/Exception.h"
 #include <iostream>
 
+/*
 std::unordered_map<std::string, sf::Texture> PropsManager::textures;
 std::vector<PropInstance> PropsManager::propInstances;
 sf::Clock PropsManager::lastPlaced;
@@ -11,6 +12,7 @@ sf::RenderWindow* PropsManager::window = nullptr;
 float PropsManager::tileWidth = 0;
 float PropsManager::tileHeight = 0;
 float PropsManager::tileScale = 0;
+*/
 
 void PropsManager::loadProp(const std::string& name, const std::string& filePath) {
     sf::Texture texture;
@@ -80,25 +82,15 @@ void PropsManager::removePropInstance(float _x, float _y) {
 
     int x = _x;
     int y = _y;
-    
-    if (x == 0 && y == 0) {
-        sf::Vector2i mousePos = sf::Mouse::getPosition(*window);
 
-        x = (mousePos.x / (tileWidth * tileScale)) * (tileWidth * tileScale);
-        y = (mousePos.y / (tileHeight * tileScale)) * (tileHeight * tileScale);
+    // Snap to grid
+    x = (x / (tileWidth * tileScale)) * (tileWidth * tileScale);
+    y = (y / (tileHeight * tileScale)) * (tileHeight * tileScale);
 
-        // Check for intersection with prop instance
-        for (auto it = propInstances.begin(); it != propInstances.end(); ++it) {
-            if (mousePos.x >= it->x && mousePos.x <= it->x + tileWidth * tileScale &&
-                mousePos.y >= it->y && mousePos.y <= it->y + tileHeight * tileScale) {
-                propInstances.erase(it);
-                return;
-            }
-        }
-    }
-
+    // Check for intersection with prop instance
     for (auto it = propInstances.begin(); it != propInstances.end(); ++it) {
-        if (it->x == x && it->y == y) {
+        if (x >= it->x && x <= it->x + tileWidth * tileScale &&
+            y >= it->y && y <= it->y + tileHeight * tileScale) {
             propInstances.erase(it);
             return;
         }
