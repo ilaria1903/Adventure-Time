@@ -10,7 +10,7 @@ public:
     LevelEditor(const LevelEditor& other) = default;
     void handleInput(sf::RenderWindow& window);
     void handleMouseScroll(const sf::Event::MouseWheelScrollEvent& scrollEvent);
-    void render(sf::RenderWindow& window);
+    void render(sf::RenderWindow& window, const sf::Vector2f& _playerPos);
     void updateLevelData();
 
     int getTileIndex(float x, float y) const;

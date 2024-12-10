@@ -48,10 +48,17 @@ void LevelEditor::handleInput(sf::RenderWindow& window) {
     }
 }
 
-void LevelEditor::render(sf::RenderWindow& window) {
+void LevelEditor::render(sf::RenderWindow& window, const sf::Vector2f& _playerPos) {
     sf::Vector2i mousePos = sf::Mouse::getPosition(window);
-    int gridX = mousePos.x / (tileWidth * tileScale);
-    int gridY = mousePos.y / (tileHeight * tileScale);
+    
+    // Add X player position to mouse position
+    sf::Vector2f adjustedPos = sf::Vector2f(mousePos.x + _playerPos.x - window.getSize().x / 2, mousePos.y);
+
+    int gridX = adjustedPos.x / (tileWidth * tileScale);
+    int gridY = adjustedPos.y / (tileHeight * tileScale);
+
+    // int gridX = mousePos.x / (tileWidth * tileScale);
+    // int gridY = mousePos.y / (tileHeight * tileScale);
 
     level.setLevelData(levelData);
     level.render(window);

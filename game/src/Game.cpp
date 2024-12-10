@@ -56,6 +56,8 @@ void Game::start() {
         
         editor.updateLevelData();
 
+        character.clone(); // For function unused warning
+
         // Load props
         propsManager.loadProp("sign", "assets/props/sign.png");
         propsManager.loadProp("cherry", "assets/props/cherry.png");
@@ -183,7 +185,7 @@ void Game::render() {
     window.clear();
     // level.render(window);
     camera.apply(window);
-    editor.render(window);
+    editor.render(window, character.getPosition());
     propsManager.renderProps(window);
     character.render(window);
     dialogueBox.render(window);

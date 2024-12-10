@@ -51,7 +51,7 @@ Player& Player::operator=(const Player& other) {
 }
 
 Entity* Player::clone() const {
-return new Player(*this);
+    return new Player(*this);
 }
 
 Player::~Player() {
@@ -409,9 +409,9 @@ const sf::Vector2f Player::getPosition() const {
     return sf::Vector2f(x, y);
 }
 
-//const sf::Vector2f Player::getVelocity() const {
- //   return sf::Vector2f(velocityX, velocityY);
-//}
+const sf::Vector2f Player::getVelocity() const {
+    return sf::Vector2f(velocityX, velocityY);
+}
 
 void Player::applyGravity(float _deltaTime) {
     velocityY += gravity * _deltaTime;
