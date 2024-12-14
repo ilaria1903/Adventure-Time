@@ -36,7 +36,7 @@ public:
     Entity* clone() const override;
     void render(sf::RenderWindow& window) override;
 
-    const sf::Vector2f getVelocity() const;
+    // const sf::Vector2f getVelocity() const;
     const sf::Vector2f getPosition() const;
     // int getX() const { return x; }
     // int getY() const { return y; }

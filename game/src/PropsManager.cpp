@@ -14,6 +14,8 @@ float PropsManager::tileHeight = 0;
 float PropsManager::tileScale = 0;
 */
 
+PropsManager::PropsManager() : tileWidth(0), tileHeight(0), tileScale(0), window(nullptr) {}
+
 void PropsManager::loadProp(const std::string& name, const std::string& filePath) {
     sf::Texture texture;
     if (!texture.loadFromFile(filePath)) {

@@ -9,4 +9,4 @@ cppcheck --enable=all \
     --suppress=missingIncludeSystem \
     --suppress=unmatchedSuppression \
     --suppress=useStlAlgorithm \
-    # --error-exitcode=1 # Not sure why GitHub Actions always returns 1 altough there are no errors
+    --error-exitcode=1 # Not sure why GitHub Actions always returns 1 altough there are no errors

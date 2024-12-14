@@ -7,7 +7,7 @@ class Camera {
 public:
     Camera(float width, float height);
     void startFollowing(const sf::Vector2f& newTarget);
-    void stopFollowing();
+    // void stopFollowing();
     void update(float deltaTime, sf::Vector2f target);
     void apply(sf::RenderWindow& window);
 

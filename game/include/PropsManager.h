@@ -15,6 +15,7 @@ struct PropInstance {
 
 class PropsManager {
 public:
+    PropsManager();
     void loadProp(const std::string& name, const std::string& filePath);
     void addPropInstance(const std::string& name, float scale = 3.0f, int x = 0, int y = 0);
     void removePropInstance(float x = 0, float y = 0);
