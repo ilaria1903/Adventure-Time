@@ -50,7 +50,7 @@ protected:
  //   Entity* clone() const override;
 //private:
 //    std::vector<std::vector<int>> levelData;
-    std::vector<CollisionType> collisionData;
+   // std::vector<CollisionType> collisionData;
  //   int tileWidth;
 //    int tileHeight;
 //};
