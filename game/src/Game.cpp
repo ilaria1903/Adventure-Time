@@ -56,7 +56,7 @@ void Game::start() {
         
         editor.updateLevelData();
 
-        character.clone(); // For function unused warning
+        //character.clone(); // For function unused warning
 
         // Load props
         propsManager.loadProp("sign", "assets/props/sign.png");
