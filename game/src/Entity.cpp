@@ -32,9 +32,9 @@ void Enemy::render(sf::RenderWindow& window) {
     window.draw(sprite);
 }
 
-Entity* Enemy::clone() const {
-    return new Enemy(*this);
-}
+//Entity* Enemy::clone() const {
+ //   return new Enemy(*this);
+//}
 
 Boss::Boss(const std::string& name, int x, int y) : Entity(name, x, y), levelData(), collisionData(), tileWidth(0), tileHeight(0) {
     if (!texture.loadFromFile(name)) {
@@ -64,6 +64,6 @@ void Boss::render(sf::RenderWindow& window) {
     window.draw(sprite);
 }
 
-Entity* Boss::clone() const {
-    return new Boss(*this);
-}
+//Entity* Boss::clone() const {
+//    return new Boss(*this);
+//}

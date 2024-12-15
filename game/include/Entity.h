@@ -17,7 +17,7 @@ public:
     virtual void update(float deltaTime) = 0;
     virtual void update(float deltaTime, const std::vector<std::vector<int>>& levelData, const std::vector<CollisionType>& collisionData, int tileWidth, int tileHeight) = 0;
     virtual void render(sf::RenderWindow& window) = 0;
-    virtual Entity* clone() const = 0;
+   // virtual Entity* clone() const = 0;
 
 protected:
     std::string name;
@@ -27,32 +27,32 @@ protected:
     float deltaTime;
 };
 
-class Enemy : public Entity {
-public:
-    Enemy(const std::string& name, int x, int y);
-    void update(float deltaTime) override;
-    void update(float deltaTime, const std::vector<std::vector<int>>& levelData, const std::vector<CollisionType>& collisionData, int tileWidth, int tileHeight) override;
-    void render(sf::RenderWindow& window) override;
-    Entity* clone() const override;
-private:
-    std::vector<std::vector<int>> levelData;
-    std::vector<CollisionType> collisionData;
-    int tileWidth;
-    int tileHeight;
-};
+//class Enemy : public Entity {
+//public:
+//    Enemy(const std::string& name, int x, int y);
+ //   void update(float deltaTime) override;
+ //   void update(float deltaTime, const std::vector<std::vector<int>>& levelData, const std::vector<CollisionType>& collisionData, int tileWidth, int tileHeight) override;
+ //   void render(sf::RenderWindow& window) override;
+  //  Entity* clone() const override;
+//private:
+ //   std::vector<std::vector<int>> levelData;
+ //   std::vector<CollisionType> collisionData;
+ //   int tileWidth;
+ //   int tileHeight;
+//};
 
-class Boss : public Entity {
-public:
-    Boss(const std::string& name, int x, int y);
-    void update(float deltaTime) override;
-    void update(float deltaTime, const std::vector<std::vector<int>>& levelData, const std::vector<CollisionType>& collisionData, int tileWidth, int tileHeight) override;
-    void render(sf::RenderWindow& window) override;
-    Entity* clone() const override;
-private:
-    std::vector<std::vector<int>> levelData;
+//class Boss : public Entity {
+//public:
+//    Boss(const std::string& name, int x, int y);
+ //   void update(float deltaTime) override;
+ //   void update(float deltaTime, const std::vector<std::vector<int>>& levelData, const std::vector<CollisionType>& collisionData, int tileWidth, int tileHeight) override;
+ //   void render(sf::RenderWindow& window) override;
+ //   Entity* clone() const override;
+//private:
+//    std::vector<std::vector<int>> levelData;
     std::vector<CollisionType> collisionData;
-    int tileWidth;
-    int tileHeight;
-};
+ //   int tileWidth;
+//    int tileHeight;
+//};
 
 #endif // ENTITY_H
