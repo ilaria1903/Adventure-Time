@@ -74,15 +74,15 @@ void Game::start() {
         camera.startFollowing(character.getPosition());
 
         // Load enemy and clone it
-        Enemy enemy("Enemy", 100, 100);
-        enemies.push_back(enemy);
+       // Enemy enemy("Enemy", 100, 100);
+       // enemies.push_back(enemy);
 
         // Cast cu sens
         // enemies.push_back(*dynamic_cast<Enemy*>(enemy.clone()));
         // enemies.push_back(*dynamic_cast<Enemy*>(enemy.clone()));
 
-        enemies.push_back(enemy);
-        enemies.push_back(enemy);
+      //  enemies.push_back(enemy);
+      //  enemies.push_back(enemy);
 
         // Start the game loop
         while(window.isOpen()) {
@@ -158,9 +158,9 @@ void Game::update() {
     // Update camera position
     camera.update(deltaTime, playerPos);
 
-    for (auto& enemy : enemies) {
-        enemy.update(deltaTime);
-    }
+  //  for (auto& enemy : enemies) {
+  //      enemy.update(deltaTime);
+ //   }
     // Check for collisions with props
     for (const auto& prop : propsManager.getPropInstances()) {
         if (character.getHitbox().intersects(prop.sprite.getGlobalBounds())) {
