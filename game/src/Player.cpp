@@ -50,9 +50,9 @@ Player& Player::operator=(const Player& other) {
     return *this;
 }
 
-//Entity* Player::clone() const {
-//    return new Player(*this);
-//}
+Entity* Player::clone() const {
+return new Player(*this);
+}
 
 Player::~Player() {
     idleSprites.clear();
