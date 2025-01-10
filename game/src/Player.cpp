@@ -50,9 +50,9 @@ Player& Player::operator=(const Player& other) {
     return *this;
 }
 
-//Entity* Player::clone() const {
-//return new Player(*this);
-//}
+Entity* Player::clone() const {
+    return new Player(*this);
+}
 
 Player::~Player() {
     idleSprites.clear();
@@ -106,13 +106,15 @@ void Player::update(float _deltaTime) {
     deltaTime = _deltaTime;
 }
 
-void Player::attack() {
+bool Player::attack() {
     if (state != State::Attacking && (lastAttackTime * 1000) > 300) {
         lastAttackTime = 0.0f;
         state = State::Attacking;
         currentFrame = 0;
         elapsedTime = 0.0f;
+        return true;
     }
+    return false;
 }
 
 void Player::update(float _deltaTime, const std::vector<std::vector<int>>& levelData, const std::vector<CollisionType>& collisionData, int tileWidth, int tileHeight) {
@@ -267,7 +269,7 @@ void Player::updateAnimation(float _deltaTime) {
                 }
                 break;
             case State::Attacking:
-                break;       
+                break;
         }
     }
 }
@@ -279,7 +281,7 @@ void Player::handleCollisions(const std::vector<std::vector<int>>& levelData, co
     sf::FloatRect horizontalHitbox = sf::FloatRect(hitbox.left, hitbox.top + hitbox.height / 6, hitbox.width, hitbox.height * 2 / 3);
     sf::FloatRect verticalHitbox = sf::FloatRect(hitbox.left + hitbox.width / 6, hitbox.top, hitbox.width * 2 / 3, hitbox.height);
     sf::FloatRect feetVerticalHitbox = sf::FloatRect(hitbox.left + hitbox.width / 6, hitbox.top + hitbox.height * 4 / 5, hitbox.width * 2 / 3, hitbox.height / 5);
-    
+
     // Let's check for future collisions meaning we add the velocity to the hitbox
     horizontalHitbox.left += velocityX * deltaTime;
     verticalHitbox.top += velocityY * deltaTime;
@@ -311,7 +313,7 @@ void Player::handleCollisions(const std::vector<std::vector<int>>& levelData, co
                     rect2.setFillColor(sf::Color::Transparent);
                     rect2.setOutlineColor(sf::Color::Magenta);
                     rect2.setOutlineThickness(3.0f);
-                    
+
                     if (collisionType == CollisionType::Solid) {
                         // Check left part of horizontal hitbox for hitting the right side of tiles
                         if (velocityX < 0 && horizontalHitbox.left + horizontalHitbox.width >= tileRect.left + velocityX) {
@@ -322,7 +324,7 @@ void Player::handleCollisions(const std::vector<std::vector<int>>& levelData, co
                             velocityX = 0;
                         }
                     }
-                } 
+                }
                 else if (verticalHitbox.intersects(tileRect)) {
 
                     // DEBUG
@@ -331,7 +333,7 @@ void Player::handleCollisions(const std::vector<std::vector<int>>& levelData, co
                     rect1.setFillColor(sf::Color::Transparent);
                     rect1.setOutlineColor(sf::Color::Red);
                     rect1.setOutlineThickness(3.0f);
-                    
+
                     rect2.setPosition(tileRect.left, tileRect.top);
                     rect2.setSize(sf::Vector2f(tileRect.width, tileRect.height));
                     rect2.setFillColor(sf::Color::Transparent);
@@ -353,7 +355,7 @@ void Player::handleCollisions(const std::vector<std::vector<int>>& levelData, co
                         }
                     }
                 }
-                
+
                 if (feetVerticalHitbox.intersects(tileRect)) {
 
                     // DEBUG
@@ -386,7 +388,7 @@ void Player::handleCollisions(const std::vector<std::vector<int>>& levelData, co
     // Check if the character is touching the bottom of the screen
     if (hitbox.top + hitbox.height >= 700) {
         y = 0;
-        
+
         velocityY = 0.0f;
         jumpCount = 0;
         isAirborne = false;

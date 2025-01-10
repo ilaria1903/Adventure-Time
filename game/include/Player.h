@@ -30,10 +30,10 @@ public:
     void move(float dx, float dy);
     // void takeDamage(int amount);
     // void heal(int amount);
-    void attack();
+    bool attack();
     void update(float deltaTime) override;
     void update(float deltaTime, const std::vector<std::vector<int>>& levelData, const std::vector<CollisionType>& collisionData, int tileWidth, int tileHeight) override;
-   // Entity* clone() const override;
+    Entity* clone() const override;
     void render(sf::RenderWindow& window) override;
 
     // const sf::Vector2f getVelocity() const;
@@ -42,6 +42,7 @@ public:
     // int getY() const { return y; }
 
     const sf::FloatRect getHitbox() const;
+    bool getFacingRight() const { return facingRight; }
     // State getState() const { return state; }
 
     // void setHealth(int health) { this->health = health; }

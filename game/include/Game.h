@@ -26,6 +26,7 @@ public:
     void update();
     void render();
     void handleInput();
+    void handleMouseClick(const sf::Event::MouseButtonEvent& mouse);
     // void readStory();
 
     friend std::ostream& operator<<(std::ostream& os, const Game& game);
@@ -42,7 +43,7 @@ private:
     bool isFocused;
     Interface ui;
     DialogueBox dialogueBox;
-  //  std::vector<Enemy> enemies;
+    std::vector<Enemy> enemies;
     PropsManager propsManager;
 };
 
