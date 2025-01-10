@@ -30,12 +30,12 @@ void Enemy::update(float _deltaTime, const std::vector<std::vector<int>>& _level
     tileHeight = _tileHeight;
 
     // Update enemy logic
-
+    
     int tileX = (int)(x / tileWidth);
 
     auto hitbox = sprite.getGlobalBounds();
     int tileYBottom = (int)((hitbox.top + hitbox.height + 30.0f) / tileHeight);
-
+    
     float tempX = x + speed * direction * deltaTime;
     tileX = (int)(tempX / tileWidth);
 
@@ -50,7 +50,7 @@ void Enemy::update(float _deltaTime, const std::vector<std::vector<int>>& _level
     }
 
     x += speed * direction * deltaTime;
-
+    
     tileYBottom = (int)((hitbox.top + hitbox.height) / tileHeight);
     // Apply gravity if enemy is not on the ground
     if (tileYBottom < (int)levelData.size() && levelData[tileYBottom][tileX] == -1) {

@@ -43,7 +43,7 @@ void Game::start() {
         ///////////////////////////////////////////////////////////////////////////
 
         // Init stuff
-
+        
         level.loadTileset("assets/world/tileset.png", TILE_SIZE, TILE_SIZE);
 
         // Fill the screen with empty tiles
@@ -53,7 +53,7 @@ void Game::start() {
         level.setLevelData(data);
 
         ui.setWindowSize(window.getSize());
-
+        
         editor.updateLevelData();
 
         character.clone(); // For function unused warning
@@ -152,7 +152,7 @@ void Game::handleMouseClick(const sf::Event::MouseButtonEvent& mouse) {
         sf::Vector2i mousePos = sf::Mouse::getPosition(window);
         sf::Vector2f worldPos = window.mapPixelToCoords(mousePos);
         worldPos.x += character.getPosition().x - window.getSize().x / 2;
-
+        
         // Weird bug where enemy has white box if not pointer
         // Spawn enemy at mouse position
         Enemy* enemy = new Enemy("Enemy", worldPos.x, worldPos.y);
@@ -167,7 +167,7 @@ void Game::update() {
     auto tileHeight = level.getTileHeight();
 
     character.update(deltaTime, levelData, collisionData, tileWidth, tileHeight);
-
+    
     // Check if the player is approaching the edge of the currently loaded level data
     const int expansionThreshold = 1; // Number of tiles from the edge to trigger expansion
     const int expansionAmount = 10; // Number of columns to expand
@@ -202,7 +202,7 @@ void Game::update() {
                     dialogueBox.show("This is a sign!");
                 }
             }
-        } else
+        } else 
             dialogueBox.hide();
     }
 
@@ -266,7 +266,7 @@ void Game::handleInput() {
     sf::Vector2f playerPos = character.getPosition();
 
     editor.handleInput(window, playerPos);
-
+    
     // Convert mouse position to world coordinates
     sf::Vector2i mousePos = sf::Mouse::getPosition(window);
 
