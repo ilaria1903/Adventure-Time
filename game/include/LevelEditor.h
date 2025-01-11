@@ -8,12 +8,12 @@ class LevelEditor {
 public:
     LevelEditor(Level& level, int tileWidth, int tileHeight, float tileScale);
     LevelEditor(const LevelEditor& other) = default;
-    void handleInput(sf::RenderWindow& window);
+    void handleInput(sf::RenderWindow& window, const sf::Vector2f& _playerPos);
     void handleMouseScroll(const sf::Event::MouseWheelScrollEvent& scrollEvent);
     void render(sf::RenderWindow& window, const sf::Vector2f& _playerPos);
     void updateLevelData();
 
-    int getTileIndex(float x, float y) const;
+    // int getTileIndex(float x, float y) const;
 
 private:
     Level& level;

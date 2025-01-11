@@ -26,10 +26,14 @@ void LevelEditor::handleMouseScroll(const sf::Event::MouseWheelScrollEvent& scro
     updateCurrentTileSprite();
 }
 
-void LevelEditor::handleInput(sf::RenderWindow& window) {
+void LevelEditor::handleInput(sf::RenderWindow& window, const sf::Vector2f& _playerPos) {
     sf::Vector2i mousePos = sf::Mouse::getPosition(window);
-    int gridX = mousePos.x / (tileWidth * tileScale);
-    int gridY = mousePos.y / (tileHeight * tileScale);
+
+    // Add X player position to mouse position
+    sf::Vector2f adjustedPos = sf::Vector2f(mousePos.x + _playerPos.x - window.getSize().x / 2, mousePos.y);
+
+    int gridX = adjustedPos.x / (tileWidth * tileScale);
+    int gridY = adjustedPos.y / (tileHeight * tileScale);
 
     if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
         if (gridX >= 0 && gridX < (int)levelData[0].size() && gridY >= 0 && gridY < (int)levelData.size()) {
@@ -50,7 +54,7 @@ void LevelEditor::handleInput(sf::RenderWindow& window) {
 
 void LevelEditor::render(sf::RenderWindow& window, const sf::Vector2f& _playerPos) {
     sf::Vector2i mousePos = sf::Mouse::getPosition(window);
-    
+
     // Add X player position to mouse position
     sf::Vector2f adjustedPos = sf::Vector2f(mousePos.x + _playerPos.x - window.getSize().x / 2, mousePos.y);
 
@@ -62,7 +66,7 @@ void LevelEditor::render(sf::RenderWindow& window, const sf::Vector2f& _playerPo
 
     level.setLevelData(levelData);
     level.render(window);
-    
+
     // Draw the current tile sprite at the mouse position over the level
     if (gridX >= 0 && gridX < (int)levelData[0].size() && gridY >= 0 && gridY < (int)levelData.size()) {
         currentTileSprite.setPosition(gridX * tileWidth * tileScale, gridY * tileHeight * tileScale);
@@ -91,13 +95,13 @@ void LevelEditor::updateCurrentTileSprite() {
     }
 }
 
-int LevelEditor::getTileIndex(float _x, float _y) const {
-    int x = _x / (tileWidth * tileScale);
-    int y = _y / (tileHeight * tileScale);
+// int LevelEditor::getTileIndex(float _x, float _y) const {
+//     int x = _x / (tileWidth * tileScale);
+//     int y = _y / (tileHeight * tileScale);
 
-    if (x >= 0 && x < (int)levelData[0].size() && y >= 0 && y < (int)levelData.size()) {
-        return levelData[y][x];
-    }
+//     if (x >= 0 && x < (int)levelData[0].size() && y >= 0 && y < (int)levelData.size()) {
+//         return levelData[y][x];
+//     }
 
-    return -1;
-}
+//     return -1;
+// }

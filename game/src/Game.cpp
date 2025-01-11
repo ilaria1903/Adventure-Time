@@ -43,7 +43,7 @@ void Game::start() {
         ///////////////////////////////////////////////////////////////////////////
 
         // Init stuff
-        
+
         level.loadTileset("assets/world/tileset.png", TILE_SIZE, TILE_SIZE);
 
         // Fill the screen with empty tiles
@@ -53,10 +53,10 @@ void Game::start() {
         level.setLevelData(data);
 
         ui.setWindowSize(window.getSize());
-        
+
         editor.updateLevelData();
 
-     //   character.clone(); // For function unused warning
+        character.clone(); // For function unused warning
 
         // Load props
         propsManager.loadProp("sign", "assets/props/sign.png");
@@ -67,22 +67,27 @@ void Game::start() {
         propsManager.setTileSize(TILE_SIZE, TILE_SIZE, TILE_SCALE);
 
         // Load level data
-        level.loadLevelData("assets/levels/level2.txt");
+        level.loadLevelData("assets/levels/level1.txt");
         editor.updateLevelData();
 
         character.update(0, level.getLevelData(), level.getCollisionData(), level.getTileWidth(), level.getTileHeight());
         camera.startFollowing(character.getPosition());
 
         // Load enemy and clone it
-       // Enemy enemy("Enemy", 100, 100);
-       // enemies.push_back(enemy);
+        Enemy enemy("Enemy", 100, 100);
+        enemies.push_back(enemy);
 
         // Cast cu sens
         // enemies.push_back(*dynamic_cast<Enemy*>(enemy.clone()));
         // enemies.push_back(*dynamic_cast<Enemy*>(enemy.clone()));
 
-      //  enemies.push_back(enemy);
-      //  enemies.push_back(enemy);
+        // enemies.push_back(enemy);
+        // enemies.push_back(enemy);
+
+        std::cout << "Number of Entity instances: " << Entity::getInstanceCount() << std::endl;
+
+        // Run this for initialisation
+        render();
 
         // Start the game loop
         while(window.isOpen()) {
@@ -110,6 +115,9 @@ void Game::start() {
                     break;
                 case sf::Event::MouseWheelScrolled:
                     editor.handleMouseScroll(e.mouseWheelScroll);
+                    break;
+                case sf::Event::MouseButtonPressed:
+                    handleMouseClick(e.mouseButton);
                     break;
                 default:
                     break;
@@ -139,9 +147,27 @@ void Game::start() {
     }
 }
 
+void Game::handleMouseClick(const sf::Event::MouseButtonEvent& mouse) {
+    if (mouse.button == sf::Mouse::Middle) {
+        sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+        sf::Vector2f worldPos = window.mapPixelToCoords(mousePos);
+        worldPos.x += character.getPosition().x - window.getSize().x / 2;
+
+        // Weird bug where enemy has white box if not pointer
+        // Spawn enemy at mouse position
+        Enemy* enemy = new Enemy("Enemy", worldPos.x, worldPos.y);
+        enemies.push_back(*enemy);
+    }
+}
+
 void Game::update() {
-    character.update(deltaTime, level.getLevelData(), level.getCollisionData(), level.getTileWidth(), level.getTileHeight());
-    
+    auto levelData = level.getLevelData();
+    auto collisionData = level.getCollisionData();
+    auto tileWidth = level.getTileWidth();
+    auto tileHeight = level.getTileHeight();
+
+    character.update(deltaTime, levelData, collisionData, tileWidth, tileHeight);
+
     // Check if the player is approaching the edge of the currently loaded level data
     const int expansionThreshold = 1; // Number of tiles from the edge to trigger expansion
     const int expansionAmount = 10; // Number of columns to expand
@@ -158,9 +184,11 @@ void Game::update() {
     // Update camera position
     camera.update(deltaTime, playerPos);
 
-  //  for (auto& enemy : enemies) {
-  //      enemy.update(deltaTime);
- //   }
+    for (auto& enemy : enemies) {
+        // std::cout << "updating position\n";
+        enemy.update(deltaTime, levelData, collisionData, tileWidth, tileHeight);
+    }
+
     // Check for collisions with props
     for (const auto& prop : propsManager.getPropInstances()) {
         if (character.getHitbox().intersects(prop.sprite.getGlobalBounds())) {
@@ -174,7 +202,7 @@ void Game::update() {
                     dialogueBox.show("This is a sign!");
                 }
             }
-        } else 
+        } else
             dialogueBox.hide();
     }
 
@@ -187,6 +215,9 @@ void Game::render() {
     camera.apply(window);
     editor.render(window, character.getPosition());
     propsManager.renderProps(window);
+    for (auto& enemy : enemies) {
+        enemy.render(window);
+    }
     character.render(window);
     dialogueBox.render(window);
     window.setView(window.getDefaultView());
@@ -208,25 +239,43 @@ void Game::handleInput() {
         dx += speed;
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::E)) {
-        character.attack();
+        if (character.attack()) {
+            // Check for collision with enemies
+            std::vector<Enemy> enemiesToRemove;
+            for (auto& enemy : enemies) {
+                auto swordHitbox = character.getHitbox();
+                swordHitbox.left += character.getFacingRight() ? swordHitbox.width : -swordHitbox.width;
+                if (swordHitbox.intersects(enemy.getSprite().getGlobalBounds())) {
+                    enemy.takeDamage(10);
+                    std::cout << "Enemy health: " << enemy.getHealth() << '\n';
+                    if (enemy.getHealth() <= 0) {
+                        // enemies.erase(std::remove(enemies.begin(), enemies.end(), enemy), enemies.end());
+                        enemiesToRemove.push_back(enemy);
+                    }
+                }
+            }
+            for (size_t i = 0; i < enemiesToRemove.size(); i++) {
+                enemies.erase(std::remove(enemies.begin(), enemies.end(), enemiesToRemove[i]), enemies.end());
+            }
+        }
     }
 
     character.move(dx, dy);
-    
-    editor.handleInput(window);
-    
-    // Convert mouse position to world coordinates
-    sf::Vector2i mousePos = sf::Mouse::getPosition(window);
 
     // Get player position
     sf::Vector2f playerPos = character.getPosition();
+
+    editor.handleInput(window, playerPos);
+
+    // Convert mouse position to world coordinates
+    sf::Vector2i mousePos = sf::Mouse::getPosition(window);
 
     // Add X player position to mouse position
     sf::Vector2f adjustedPos = sf::Vector2f(mousePos.x + playerPos.x - window.getSize().x / 2, mousePos.y);
 
     // DEBUG
     // Check current tile index at mouse position
-    std::cout << "Tile index: " << editor.getTileIndex(adjustedPos.x, adjustedPos.y) << '\n';
+    // std::cout << "Tile index: " << editor.getTileIndex(adjustedPos.x, adjustedPos.y) << '\n';
 
     // if C is pressed add a cherry prop
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::C)) {
