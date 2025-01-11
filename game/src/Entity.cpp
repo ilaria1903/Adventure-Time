@@ -1,16 +1,30 @@
 #include "../include/Entity.h"
+#include <stdexcept>
+#include <iostream>
 
+// Initialize static member variable
 int Entity::instanceCount = 0;
 
-Entity::Entity() : name("Entity"), x(0), y(0), sprite(), texture(), deltaTime(0.0f) { ++instanceCount; }
+// Base Entity implementation
+Entity::Entity() : name("Entity"), x(0), y(0), sprite(), texture(), deltaTime(0.0f) {
+    ++instanceCount;
+}
 
-Entity::Entity(const std::string& name, int x, int y) : name(name), x(x), y(y), sprite(), texture(), deltaTime(0.0f) { ++instanceCount; }
+Entity::Entity(const std::string& name, int x, int y) : name(name), x(x), y(y), sprite(), texture(), deltaTime(0.0f) {
+    ++instanceCount;
+}
 
-Entity::~Entity() { --instanceCount; }
+Entity::~Entity() {
+    --instanceCount;
+}
 
-int Entity::getInstanceCount() { return instanceCount; }
+int Entity::getInstanceCount() {
+    return instanceCount;
+}
 
-Enemy::Enemy(const std::string& name, int x, int y) : Entity(name, x, y), levelData(), collisionData(), health(20.0f), speed(140.0f), velocityY(0.0f), direction(1), tileWidth(0), tileHeight(0) {
+// Enemy class implementation
+Enemy::Enemy(const std::string& name, int x, int y)
+    : Entity(name, x, y), levelData(), collisionData(), health(20.0f), speed(140.0f), velocityY(0.0f), direction(1), tileWidth(0), tileHeight(0) {
     if (!texture.loadFromFile("assets/enemy/slimer-idle.png")) {
         throw std::runtime_error("Failed to load enemy texture");
     }
@@ -29,45 +43,35 @@ void Enemy::update(float _deltaTime, const std::vector<std::vector<int>>& _level
     tileWidth = _tileWidth;
     tileHeight = _tileHeight;
 
-    // Update enemy logic
-
-    int tileX = (int)(x / tileWidth);
-
+    int tileX = static_cast<int>(x / tileWidth);
     auto hitbox = sprite.getGlobalBounds();
-    int tileYBottom = (int)((hitbox.top + hitbox.height + 30.0f) / tileHeight);
+    int tileYBottom = static_cast<int>((hitbox.top + hitbox.height + 30.0f) / tileHeight);
 
     float tempX = x + speed * direction * deltaTime;
-    tileX = (int)(tempX / tileWidth);
+    tileX = static_cast<int>(tempX / tileWidth);
 
-    // Check if enemy is about to fall off a platform
-    if (tileYBottom < (int)levelData.size()) {
-        if (direction == 1 && levelData[tileYBottom][tileX + 1] == -1) {
+    if (tileYBottom < static_cast<int>(levelData.size())) {
+        if (direction == 1 && tileX + 1 < static_cast<int>(levelData[tileYBottom].size()) && levelData[tileYBottom][tileX + 1] == -1) {
             direction *= -1;
-        }
-        else if (direction == -1 && levelData[tileYBottom][tileX] == -1) {
+        } else if (direction == -1 && tileX >= 0 && levelData[tileYBottom][tileX] == -1) {
             direction *= -1;
         }
     }
 
     x += speed * direction * deltaTime;
 
-    tileYBottom = (int)((hitbox.top + hitbox.height) / tileHeight);
-    // Apply gravity if enemy is not on the ground
-    if (tileYBottom < (int)levelData.size() && levelData[tileYBottom][tileX] == -1) {
+    tileYBottom = static_cast<int>((hitbox.top + hitbox.height) / tileHeight);
+    if (tileYBottom < static_cast<int>(levelData.size()) && tileX < static_cast<int>(levelData[tileYBottom].size()) && levelData[tileYBottom][tileX] == -1) {
         velocityY += 20.0f;
-    }
-    else {
+    } else {
         velocityY = 0.0f;
     }
 
     y += velocityY * deltaTime;
-
-    // std::cout << "Enemy position: " << x << ", " << y << '\n';
     sprite.setPosition(x, y);
 }
 
 void Enemy::render(sf::RenderWindow& window) {
-    // Scale the sprite 2x
     sprite.setScale(2.0f, 2.0f);
     window.draw(sprite);
 }
@@ -76,7 +80,9 @@ Entity* Enemy::clone() const {
     return new Enemy(*this);
 }
 
-Boss::Boss(const std::string& name, int x, int y) : Entity(name, x, y), levelData(), collisionData(), tileWidth(0), tileHeight(0) {
+// Boss class implementation
+Boss::Boss(const std::string& name, int x, int y)
+    : Entity(name, x, y), levelData(), collisionData(), tileWidth(0), tileHeight(0) {
     if (!texture.loadFromFile(name)) {
         throw std::runtime_error("Failed to load boss texture");
     }
@@ -95,7 +101,6 @@ void Boss::update(float _deltaTime, const std::vector<std::vector<int>>& _levelD
     tileWidth = _tileWidth;
     tileHeight = _tileHeight;
 
-    // Update enemy logic
     x += 50.0f * deltaTime;
     sprite.setPosition(x, y);
 }
@@ -108,7 +113,9 @@ Entity* Boss::clone() const {
     return new Boss(*this);
 }
 
-FlyingEnemy::FlyingEnemy(const std::string& name, int x, int y) : Entity(name, x, y), levelData(), collisionData(), speedX(100.0f), speedY(50.0f), tileWidth(0), tileHeight(0) {
+// FlyingEnemy class implementation
+FlyingEnemy::FlyingEnemy(const std::string& name, int x, int y)
+    : Entity(name, x, y), levelData(), collisionData(), speedX(100.0f), speedY(50.0f), tileWidth(0), tileHeight(0) {
     if (!texture.loadFromFile("assets/enemy/flying-enemy.png")) {
         throw std::runtime_error("Failed to load flying enemy texture");
     }
@@ -127,10 +134,8 @@ void FlyingEnemy::update(float _deltaTime, const std::vector<std::vector<int>>& 
     tileWidth = _tileWidth;
     tileHeight = _tileHeight;
 
-    // Update flying enemy logic
     x += speedX * deltaTime;
     y += speedY * deltaTime;
-    std::cout << "FlyingEnemy position: " << x << ", " << y << '\n';
     sprite.setPosition(x, y);
 }
 
