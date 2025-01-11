@@ -69,4 +69,21 @@ private:
     int tileHeight;
 };
 
+class FlyingEnemy : public Entity {
+public:
+    FlyingEnemy(const std::string& name, int x, int y);
+    void update(float deltaTime) override;
+    void update(float deltaTime, const std::vector<std::vector<int>>& levelData, const std::vector<CollisionType>& collisionData, int tileWidth, int tileHeight) override;
+    void render(sf::RenderWindow& window) override;
+    Entity* clone() const override;
+
+private:
+    std::vector<std::vector<int>> levelData;
+    std::vector<CollisionType> collisionData;
+    float speedX;
+    float speedY;
+    int tileWidth;
+    int tileHeight;
+};
+
 #endif // ENTITY_H
