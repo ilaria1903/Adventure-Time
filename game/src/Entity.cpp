@@ -107,3 +107,37 @@ void Boss::render(sf::RenderWindow& window) {
 Entity* Boss::clone() const {
     return new Boss(*this);
 }
+
+FlyingEnemy::FlyingEnemy(const std::string& name, int x, int y) : Entity(name, x, y), levelData(), collisionData(), speedX(100.0f), speedY(50.0f), tileWidth(0), tileHeight(0) {
+    if (!texture.loadFromFile("assets/enemy/flying-enemy.png")) {
+        throw std::runtime_error("Failed to load flying enemy texture");
+    }
+    sprite.setTexture(texture);
+    sprite.setPosition(x, y);
+}
+
+void FlyingEnemy::update(float _deltaTime) {
+    deltaTime = _deltaTime;
+}
+
+void FlyingEnemy::update(float _deltaTime, const std::vector<std::vector<int>>& _levelData, const std::vector<CollisionType>& _collisionData, int _tileWidth, int _tileHeight) {
+    deltaTime = _deltaTime;
+    levelData = _levelData;
+    collisionData = _collisionData;
+    tileWidth = _tileWidth;
+    tileHeight = _tileHeight;
+
+    // Update flying enemy logic
+    x += speedX * deltaTime;
+    y += speedY * deltaTime;
+    std::cout << "FlyingEnemy position: " << x << ", " << y << '\n';
+    sprite.setPosition(x, y);
+}
+
+void FlyingEnemy::render(sf::RenderWindow& window) {
+    window.draw(sprite);
+}
+
+Entity* FlyingEnemy::clone() const {
+    return new FlyingEnemy(*this);
+}
