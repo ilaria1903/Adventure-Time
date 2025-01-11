@@ -29,45 +29,36 @@ void Enemy::update(float _deltaTime, const std::vector<std::vector<int>>& _level
     tileWidth = _tileWidth;
     tileHeight = _tileHeight;
 
-    // Update enemy logic
-    
     int tileX = (int)(x / tileWidth);
 
     auto hitbox = sprite.getGlobalBounds();
     int tileYBottom = (int)((hitbox.top + hitbox.height + 30.0f) / tileHeight);
-    
+
     float tempX = x + speed * direction * deltaTime;
     tileX = (int)(tempX / tileWidth);
 
-    // Check if enemy is about to fall off a platform
-    if (tileYBottom < (int)levelData.size()) {
-        if (direction == 1 && levelData[tileYBottom][tileX + 1] == -1) {
+    if (tileYBottom >= 0 && tileYBottom < (int)levelData.size()) {
+        if (direction == 1 && tileX + 1 < (int)levelData[tileYBottom].size() && levelData[tileYBottom][tileX + 1] == -1) {
             direction *= -1;
-        }
-        else if (direction == -1 && levelData[tileYBottom][tileX] == -1) {
+        } else if (direction == -1 && tileX >= 0 && levelData[tileYBottom][tileX] == -1) {
             direction *= -1;
         }
     }
 
     x += speed * direction * deltaTime;
-    
+
     tileYBottom = (int)((hitbox.top + hitbox.height) / tileHeight);
-    // Apply gravity if enemy is not on the ground
-    if (tileYBottom < (int)levelData.size() && levelData[tileYBottom][tileX] == -1) {
+    if (tileYBottom >= 0 && tileYBottom < (int)levelData.size() && tileX >= 0 && tileX < (int)levelData[tileYBottom].size() && levelData[tileYBottom][tileX] == -1) {
         velocityY += 20.0f;
-    }
-    else {
+    } else {
         velocityY = 0.0f;
     }
 
     y += velocityY * deltaTime;
-
-    // std::cout << "Enemy position: " << x << ", " << y << '\n';
     sprite.setPosition(x, y);
 }
 
 void Enemy::render(sf::RenderWindow& window) {
-    // Scale the sprite 2x
     sprite.setScale(2.0f, 2.0f);
     window.draw(sprite);
 }
@@ -95,7 +86,6 @@ void Boss::update(float _deltaTime, const std::vector<std::vector<int>>& _levelD
     tileWidth = _tileWidth;
     tileHeight = _tileHeight;
 
-    // Update enemy logic
     x += 50.0f * deltaTime;
     sprite.setPosition(x, y);
 }
@@ -127,9 +117,11 @@ void FlyingEnemy::update(float _deltaTime, const std::vector<std::vector<int>>& 
     tileWidth = _tileWidth;
     tileHeight = _tileHeight;
 
-    // Update flying enemy logic
-    x += speedX * deltaTime;
-    y += speedY * deltaTime;
+    if (tileWidth > 0 && tileHeight > 0) {
+        x += speedX * deltaTime;
+        y += speedY * deltaTime;
+    }
+
     std::cout << "FlyingEnemy position: " << x << ", " << y << '\n';
     sprite.setPosition(x, y);
 }

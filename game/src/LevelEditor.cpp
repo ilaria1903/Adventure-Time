@@ -1,5 +1,4 @@
 #include "../include/LevelEditor.h"
-// #include "../include/PropsManager.h"
 
 LevelEditor::LevelEditor(Level& level, int tileWidth, int tileHeight, float tileScale)
     : level(level), tileWidth(tileWidth), tileHeight(tileHeight), tileScale(tileScale), currentTileIndex(0) {
@@ -29,23 +28,19 @@ void LevelEditor::handleMouseScroll(const sf::Event::MouseWheelScrollEvent& scro
 void LevelEditor::handleInput(sf::RenderWindow& window, const sf::Vector2f& _playerPos) {
     sf::Vector2i mousePos = sf::Mouse::getPosition(window);
 
-    // Add X player position to mouse position
     sf::Vector2f adjustedPos = sf::Vector2f(mousePos.x + _playerPos.x - window.getSize().x / 2, mousePos.y);
 
     int gridX = adjustedPos.x / (tileWidth * tileScale);
     int gridY = adjustedPos.y / (tileHeight * tileScale);
 
-    if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-        if (gridX >= 0 && gridX < (int)levelData[0].size() && gridY >= 0 && gridY < (int)levelData.size()) {
+    if (gridX >= 0 && gridY >= 0 && !levelData.empty() && gridY < (int)levelData.size() && gridX < (int)levelData[0].size()) {
+        if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
             levelData[gridY][gridX] = currentTileIndex;
-        }
-    } else if (sf::Mouse::isButtonPressed(sf::Mouse::Right)) {
-        if (gridX >= 0 && gridX < (int)levelData[0].size() && gridY >= 0 && gridY < (int)levelData.size()) {
+        } else if (sf::Mouse::isButtonPressed(sf::Mouse::Right)) {
             levelData[gridY][gridX] = -1;
         }
     }
 
-    // If CTRL + S is pressed, save the level data to a file
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) && sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)) {
         level.setLevelData(levelData);
         level.saveLevelData("level.txt");
@@ -54,54 +49,32 @@ void LevelEditor::handleInput(sf::RenderWindow& window, const sf::Vector2f& _pla
 
 void LevelEditor::render(sf::RenderWindow& window, const sf::Vector2f& _playerPos) {
     sf::Vector2i mousePos = sf::Mouse::getPosition(window);
-    
-    // Add X player position to mouse position
     sf::Vector2f adjustedPos = sf::Vector2f(mousePos.x + _playerPos.x - window.getSize().x / 2, mousePos.y);
 
     int gridX = adjustedPos.x / (tileWidth * tileScale);
     int gridY = adjustedPos.y / (tileHeight * tileScale);
 
-    // int gridX = mousePos.x / (tileWidth * tileScale);
-    // int gridY = mousePos.y / (tileHeight * tileScale);
-
     level.setLevelData(levelData);
     level.render(window);
-    
-    // Draw the current tile sprite at the mouse position over the level
-    if (gridX >= 0 && gridX < (int)levelData[0].size() && gridY >= 0 && gridY < (int)levelData.size()) {
+
+    if (gridX >= 0 && gridY >= 0 && !levelData.empty() && gridY < (int)levelData.size() && gridX < (int)levelData[0].size()) {
         currentTileSprite.setPosition(gridX * tileWidth * tileScale, gridY * tileHeight * tileScale);
         window.draw(currentTileSprite);
     }
-    // drawGrid(window);
 }
-
-// void LevelEditor::drawGrid(sf::RenderWindow& window) {
-//     for (int y = 0; y < levelData.size(); ++y) {
-//         for (int x = 0; x < levelData[y].size(); ++x) {
-//             gridCell.setPosition(x * tileWidth * tileScale, y * tileHeight * tileScale);
-//             window.draw(gridCell);
-//         }
-//     }
-// }
 
 void LevelEditor::updateLevelData() {
     levelData = level.getLevelData();
-}
-
-void LevelEditor::updateCurrentTileSprite() {
-    if (currentTileIndex < level.getTiles().size()) {
-        currentTileSprite = level.getTiles()[currentTileIndex];
-        currentTileSprite.setScale(tileScale, tileScale);
+    if (levelData.empty()) {
+        throw std::runtime_error("Level data is empty in updateLevelData.");
     }
 }
 
-// int LevelEditor::getTileIndex(float _x, float _y) const {
-//     int x = _x / (tileWidth * tileScale);
-//     int y = _y / (tileHeight * tileScale);
-
-//     if (x >= 0 && x < (int)levelData[0].size() && y >= 0 && y < (int)levelData.size()) {
-//         return levelData[y][x];
-//     }
-
-//     return -1;
-// }
+void LevelEditor::updateCurrentTileSprite() {
+    if (!level.getTiles().empty() && currentTileIndex < level.getTiles().size()) {
+        currentTileSprite = level.getTiles()[currentTileIndex];
+        currentTileSprite.setScale(tileScale, tileScale);
+    } else {
+        throw std::out_of_range("Current tile index is out of range in updateCurrentTileSprite.");
+    }
+}

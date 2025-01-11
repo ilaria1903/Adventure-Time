@@ -9,7 +9,6 @@ Level::Level() : tileWidth(0), tileHeight(0), backgroundScale(3.0), tileScale(3.
 
 Level::Level(const std::string& backgroundFile) : backgroundScale(3.0), tileScale(3.0) {
     if (!backgroundTexture.loadFromFile(backgroundFile)) {
-        // std::cerr << "Error: Failed to load background texture" << std::endl;
         throw FileLoadException("Failed to load background texture in Level::Level");
     }
     backgroundSprite.setTexture(backgroundTexture);
@@ -17,7 +16,6 @@ Level::Level(const std::string& backgroundFile) : backgroundScale(3.0), tileScal
 
 void Level::loadTileset(const std::string& tilesetFile, int _tileWidth, int _tileHeight) {
     if (!tilesetTexture.loadFromFile(tilesetFile)) {
-        // std::cerr << "Error: Failed to load tileset texture" << std::endl;
         throw FileLoadException("Failed to load tileset texture in Level::loadTileset");
     }
 
@@ -34,18 +32,16 @@ void Level::loadTileset(const std::string& tilesetFile, int _tileWidth, int _til
             tile.setTexture(tilesetTexture);
             tile.setTextureRect(sf::IntRect(x * tileWidth, y * tileHeight, tileWidth, tileHeight));
 
-            // Check if the tile is empty / transparent
-            if (!isTileTransparent(tile)) 
+            if (!isTileTransparent(tile)) {
                 tiles.push_back(tile);
-            else
+            } else {
                 transparentTiles++;
+            }
         }
     }
 
-    // Might be wrong, but this is the collision data for the tileset
     std::string collisionDataString = "11112210110011011111111111122111111111221111001100111111111121111111111100022211110111111111111011111111111111111111111111111111";
 
-    // Convert the string to an array of CollisionType
     collisionData.clear();
     for (char c : collisionDataString) {
         switch (c) {
@@ -59,17 +55,12 @@ void Level::loadTileset(const std::string& tilesetFile, int _tileWidth, int _til
                 collisionData.push_back(CollisionType::Platform);
                 break;
             default:
-                // collisionData.push_back(CollisionType::None);
                 throw InvalidOperationException("Invalid collision data in Level::loadTileset");
-                break;
         }
     }
 
     std::cout << "Loaded " << tiles.size() << " tiles\n";
     std::cout << "Found " << transparentTiles << " transparent tiles\n";
-
-    // DEBUG
-    // showTilesetWithGrid();
 }
 
 bool Level::isTileTransparent(const sf::Sprite& tile) {
@@ -86,41 +77,6 @@ bool Level::isTileTransparent(const sf::Sprite& tile) {
     }
     return true;
 }
-
-// void Level::showTilesetWithGrid() {
-//     sf::RenderWindow tilesetWindow(sf::VideoMode(tilesetTexture.getSize().x, tilesetTexture.getSize().y), "Tileset Grid");
-
-//     while (tilesetWindow.isOpen()) {
-//         sf::Event event;
-//         while (tilesetWindow.pollEvent(event)) {
-//             if (event.type == sf::Event::Closed) {
-//                 tilesetWindow.close();
-//             }
-//         }
-
-//         tilesetWindow.clear();
-
-//         for (size_t i = 0; i < tiles.size(); ++i) {
-//             sf::Sprite& tile = tiles[i];
-//             int x = (i % (tilesetTexture.getSize().x / tileWidth)) * tileWidth;
-//             int y = (i / (tilesetTexture.getSize().x / tileWidth)) * tileHeight;
-//             tile.setPosition(x, y);
-//             tilesetWindow.draw(tile);
-
-//             // Draw grid lines
-//             sf::RectangleShape line(sf::Vector2f(tileWidth, 1));
-//             line.setFillColor(sf::Color::Red);
-//             line.setPosition(x, y);
-//             tilesetWindow.draw(line);
-
-//             line.setSize(sf::Vector2f(1, tileHeight));
-//             line.setPosition(x, y);
-//             tilesetWindow.draw(line);
-//         }
-
-//         tilesetWindow.display();
-//     }
-// }
 
 void Level::setLevelData(const std::vector<std::vector<int>>& data) {
     levelData = data;
@@ -139,19 +95,16 @@ void Level::render(sf::RenderWindow& window) {
     sf::Vector2f viewSize = window.getView().getSize();
     sf::FloatRect viewRect(viewCenter - viewSize / 2.0f, viewSize);
 
-    // Calculate parallax offset
-    float parallaxFactor = 0.5f; // Adjust this value to control the parallax effect
+    float parallaxFactor = 0.5f;
     float parallaxOffsetX = viewCenter.x * parallaxFactor;
 
     backgroundSprite.setScale(backgroundScale, backgroundScale);
 
-    // Draw background tiles with parallax effect
     for (float x = viewRect.left - parallaxOffsetX; x < viewRect.left + viewRect.width; x += backgroundTexture.getSize().x * backgroundScale) {
         backgroundSprite.setPosition(x, 0);
         window.draw(backgroundSprite);
     }
 
-    // Draw level tiles
     for (size_t y = 0; y < levelData.size(); ++y) {
         for (size_t x = 0; x < levelData[y].size(); ++x) {
             int tileIndex = levelData[y][x];
@@ -169,24 +122,23 @@ void Level::updateBackgroundScale(const sf::RenderWindow& window) {
     sf::Vector2u windowSize = window.getSize();
     sf::Vector2u textureSize = backgroundTexture.getSize();
 
-    // DEBUG
-    std::cout << "windowSize: " << windowSize.x << ", " << windowSize.y << '\n';
-    std::cout << "textureSize: " << textureSize.x << ", " << textureSize.y << '\n';
-    std::cout << "scale = " << windowSize.y << " / " << textureSize.y << '\n';
-    
-    backgroundScale = windowSize.y / textureSize.y;
+    if (textureSize.y == 0) {
+        throw FileLoadException("Invalid texture size in updateBackgroundScale.");
+    }
 
-    std::cout << "scale: " << backgroundScale << '\n';
-
+    backgroundScale = windowSize.y / static_cast<float>(textureSize.y);
     backgroundSprite.setScale(backgroundScale, backgroundScale);
 }
 
 void Level::expandLevel(int additionalColumns) {
-    for (auto& row : levelData) {
-        row.insert(row.end(), additionalColumns, -1); // Add empty tiles
+    if (levelData.empty()) {
+        throw InvalidOperationException("Cannot expand level: levelData is empty.");
     }
 
-    // Add solid tiles to the bottom of the level
+    for (auto& row : levelData) {
+        row.insert(row.end(), additionalColumns, -1);
+    }
+
     int lastRowIndex = levelData.size() - 1;
     for (int i = 0; i < additionalColumns; ++i) {
         levelData[lastRowIndex][levelData[lastRowIndex].size() - additionalColumns + i] = 24;
@@ -200,7 +152,6 @@ double Level::getTileScale() const {
 void Level::saveLevelData(const std::string& filename) {
     std::ofstream file(filename);
     if (!file.is_open()) {
-        // std::cerr << "Error: Failed to open file for writing\n";
         throw FileLoadException("Failed to open file for writing in Level::saveLevelData");
     }
 
@@ -217,7 +168,6 @@ void Level::saveLevelData(const std::string& filename) {
 void Level::loadLevelData(const std::string& filename) {
     std::ifstream file(filename);
     if (!file.is_open()) {
-        // std::cerr << "Error: Failed to open file for reading\n";
         throw FileLoadException("Failed to open file for reading in Level::loadLevelData");
     }
 
@@ -231,6 +181,10 @@ void Level::loadLevelData(const std::string& filename) {
             row.push_back(value);
         }
         data.push_back(row);
+    }
+
+    if (data.empty() || data[0].empty()) {
+        throw FileLoadException("Loaded level data is invalid in Level::loadLevelData");
     }
 
     levelData = data;
