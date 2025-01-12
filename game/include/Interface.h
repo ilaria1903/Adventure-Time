@@ -9,7 +9,7 @@ public:
     Interface();
     void updateCherries(int count);
     void render(sf::RenderWindow& window);
-    void updateHearts(int health);
+    void updateHearts(float health);
 
     void setWindowSize(const sf::Vector2u& size);
 

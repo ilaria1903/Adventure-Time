@@ -35,7 +35,7 @@ void Level::loadTileset(const std::string& tilesetFile, int _tileWidth, int _til
             tile.setTextureRect(sf::IntRect(x * tileWidth, y * tileHeight, tileWidth, tileHeight));
 
             // Check if the tile is empty / transparent
-            if (!isTileTransparent(tile))
+            if (!isTileTransparent(tile)) 
                 tiles.push_back(tile);
             else
                 transparentTiles++;
@@ -173,7 +173,7 @@ void Level::updateBackgroundScale(const sf::RenderWindow& window) {
     std::cout << "windowSize: " << windowSize.x << ", " << windowSize.y << '\n';
     std::cout << "textureSize: " << textureSize.x << ", " << textureSize.y << '\n';
     std::cout << "scale = " << windowSize.y << " / " << textureSize.y << '\n';
-
+    
     backgroundScale = windowSize.y / textureSize.y;
 
     std::cout << "scale: " << backgroundScale << '\n';

@@ -15,7 +15,7 @@
 #define WINDOW_HEIGHT 700
 
 Game::Game()
-    : character("Player", 100, 0, 0, 3.0f), level("assets/world/back.png"), editor(level, 16, 16, 3.0f), camera(WINDOW_WIDTH, WINDOW_HEIGHT), deltaTime(0.0f), isFocused(true), ui(), dialogueBox() {
+    : character("Player", 50.0f, 0, 0, 3.0f), level("assets/world/back.png"), editor(level, 16, 16, 3.0f), camera(WINDOW_WIDTH, WINDOW_HEIGHT), deltaTime(0.0f), isFocused(true), ui(), dialogueBox() {
     // Load story from file
     std::ifstream file("story.txt");
     if (!file.is_open()) {
@@ -43,7 +43,7 @@ void Game::start() {
         ///////////////////////////////////////////////////////////////////////////
 
         // Init stuff
-
+        
         level.loadTileset("assets/world/tileset.png", TILE_SIZE, TILE_SIZE);
 
         // Fill the screen with empty tiles
@@ -53,7 +53,7 @@ void Game::start() {
         level.setLevelData(data);
 
         ui.setWindowSize(window.getSize());
-
+        
         editor.updateLevelData();
 
         character.clone(); // For function unused warning
@@ -72,9 +72,11 @@ void Game::start() {
 
         character.update(0, level.getLevelData(), level.getCollisionData(), level.getTileWidth(), level.getTileHeight());
         camera.startFollowing(character.getPosition());
+        
+        ui.updateHearts(character.getHealth());
 
         // Load enemy and clone it
-        Enemy enemy("Enemy", 100, 100);
+        Enemy* enemy = new Enemy("Enemy", 100, 100);
         enemies.push_back(enemy);
 
         // Cast cu sens
@@ -152,11 +154,11 @@ void Game::handleMouseClick(const sf::Event::MouseButtonEvent& mouse) {
         sf::Vector2i mousePos = sf::Mouse::getPosition(window);
         sf::Vector2f worldPos = window.mapPixelToCoords(mousePos);
         worldPos.x += character.getPosition().x - window.getSize().x / 2;
-
+        
         // Weird bug where enemy has white box if not pointer
         // Spawn enemy at mouse position
         Enemy* enemy = new Enemy("Enemy", worldPos.x, worldPos.y);
-        enemies.push_back(*enemy);
+        enemies.push_back(enemy);
     }
 }
 
@@ -167,7 +169,7 @@ void Game::update() {
     auto tileHeight = level.getTileHeight();
 
     character.update(deltaTime, levelData, collisionData, tileWidth, tileHeight);
-
+    
     // Check if the player is approaching the edge of the currently loaded level data
     const int expansionThreshold = 1; // Number of tiles from the edge to trigger expansion
     const int expansionAmount = 10; // Number of columns to expand
@@ -186,7 +188,7 @@ void Game::update() {
 
     for (auto& enemy : enemies) {
         // std::cout << "updating position\n";
-        enemy.update(deltaTime, levelData, collisionData, tileWidth, tileHeight);
+        enemy->update(deltaTime, levelData, collisionData, tileWidth, tileHeight);
     }
 
     // Check for collisions with props
@@ -202,8 +204,20 @@ void Game::update() {
                     dialogueBox.show("This is a sign!");
                 }
             }
-        } else
+        } else 
             dialogueBox.hide();
+    }
+
+    // Check for collision with enemies with 1 second invincibility
+    for (const Enemy* enemy : enemies) {
+        if (character.getHitbox().intersects(enemy->getSprite().getGlobalBounds())) {
+            // character.takeDamage(10);
+            // Call virtual function from base class Entity
+            Entity* e = &character;
+            e->takeDamage(10.0f);
+            ui.updateHearts(character.getHealth());
+            // std::cout << "Player health: " << character.getHealth() << '\n';
+        }
     }
 
     dialogueBox.update(deltaTime, camera.getView());
@@ -216,7 +230,7 @@ void Game::render() {
     editor.render(window, character.getPosition());
     propsManager.renderProps(window);
     for (auto& enemy : enemies) {
-        enemy.render(window);
+        enemy->render(window);
     }
     character.render(window);
     dialogueBox.render(window);
@@ -241,32 +255,35 @@ void Game::handleInput() {
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::E)) {
         if (character.attack()) {
             // Check for collision with enemies
-            std::vector<Enemy> enemiesToRemove;
-            for (auto& enemy : enemies) {
+            for (size_t i = 0; i < enemies.size(); i++) {
                 auto swordHitbox = character.getHitbox();
                 swordHitbox.left += character.getFacingRight() ? swordHitbox.width : -swordHitbox.width;
-                if (swordHitbox.intersects(enemy.getSprite().getGlobalBounds())) {
-                    enemy.takeDamage(10);
-                    std::cout << "Enemy health: " << enemy.getHealth() << '\n';
-                    if (enemy.getHealth() <= 0) {
+                if (swordHitbox.intersects(enemies[i]->getSprite().getGlobalBounds())) {
+                    // enemy.takeDamage(10);
+                    // Call virtual function from base class Entity
+                    Entity* e = &(*enemies[i]);
+                    e->takeDamage(10);
+                    std::cout << "Enemy health: " << enemies[i]->getHealth() << '\n';
+                    if (enemies[i]->getHealth() <= 0) {
                         // enemies.erase(std::remove(enemies.begin(), enemies.end(), enemy), enemies.end());
-                        enemiesToRemove.push_back(enemy);
+                        delete enemies[i];
+                        enemies.erase(enemies.begin() + i);
                     }
                 }
-            }
-            for (size_t i = 0; i < enemiesToRemove.size(); i++) {
-                enemies.erase(std::remove(enemies.begin(), enemies.end(), enemiesToRemove[i]), enemies.end());
             }
         }
     }
 
-    character.move(dx, dy);
+    // character.move(dx, dy);
+    // Call virtual move function from base class Entity
+    Entity* player = &character;
+    player->move(dx, dy);
 
     // Get player position
     sf::Vector2f playerPos = character.getPosition();
 
     editor.handleInput(window, playerPos);
-
+    
     // Convert mouse position to world coordinates
     sf::Vector2i mousePos = sf::Mouse::getPosition(window);
 
