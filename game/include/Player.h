@@ -21,14 +21,14 @@ public:
         Attacking
     };
 
-    Player(const std::string& name, int health, int x, int y, float scale = 1.0f);
+    Player(const std::string& name, float health, int x, int y, float scale = 1.0f);
     Player(const Player& other);
     Player& operator=(const Player& other);
     ~Player() override;
 
     void jump();
-    void move(float dx, float dy);
-    // void takeDamage(int amount);
+    void move(float dx, float dy) override;
+    void takeDamage(float amount) override;
     // void heal(int amount);
     bool attack();
     void update(float deltaTime) override;
@@ -46,12 +46,11 @@ public:
     // State getState() const { return state; }
 
     // void setHealth(int health) { this->health = health; }
-    // int getHealth() const { return health; }
+    int getHealth() const { return health; }
 
     friend std::ostream& operator<<(std::ostream& os, const Player& character);
 
 private:
-    int health;
     State state;
     float scale;
     bool facingRight;
@@ -83,6 +82,9 @@ private:
     sf::RectangleShape rect1, rect2;
 
     std::chrono::time_point<std::chrono::steady_clock> lastJumpTime;
+    std::chrono::time_point<std::chrono::steady_clock> lastHitTime;
+
+    void die();
 
     void loadAnimation(const std::string& filePath, int frameCount, std::vector<sf::Sprite>& sprites, sf::Texture& texture);
     void updateAnimation(float deltaTime);

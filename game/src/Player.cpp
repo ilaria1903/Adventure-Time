@@ -1,9 +1,9 @@
 #include "../include/Player.h"
 #include "../include/Exception.h"
 
-Player::Player(const std::string& name, int health, int x, int y, float scale)
-    : Entity(name, x, y), health(health), state(State::Idle), scale(scale), facingRight(true), isAirborne(true), currentFrame(0), frameTime(0.1f), elapsedTime(0.0f), lastAttackTime(0.0f),
-      velocityX(0.0f), velocityY(0.0f), gravity(1200.0f), jumpCount(0), maxJumps(2), maxFallSpeed(800.0f), lastJumpTime(std::chrono::steady_clock::now()) {
+Player::Player(const std::string& name, float health, int x, int y, float scale)
+    : Entity(name, health, x, y), state(State::Idle), scale(scale), facingRight(true), isAirborne(true), currentFrame(0), frameTime(0.1f), elapsedTime(0.0f), lastAttackTime(0.0f),
+      velocityX(0.0f), velocityY(0.0f), gravity(1200.0f), jumpCount(0), maxJumps(2), maxFallSpeed(800.0f), lastJumpTime(std::chrono::steady_clock::now()), lastHitTime(std::chrono::steady_clock::now()) {
     loadAnimation("assets/player/sunny-bunny-idle.png", 4, idleSprites, idleTexture);
     loadAnimation("assets/player/sunny-bunny-jump.png", 5, jumpSprites, jumpTexture);
     loadAnimation("assets/player/sunny-bunny-run.png", 6, runSprites, runTexture);
@@ -17,15 +17,14 @@ Player::Player(const std::string& name, int health, int x, int y, float scale)
 }
 
 Player::Player(const Player& other)
-    : Entity(other), health(other.health), state(other.state), scale(other.scale), facingRight(other.facingRight), isAirborne(other.isAirborne),
+    : Entity(other), state(other.state), scale(other.scale), facingRight(other.facingRight), isAirborne(other.isAirborne),
       idleSprites(other.idleSprites), jumpSprites(other.jumpSprites), runSprites(other.runSprites), attackSprites(other.attackSprites), slashSprite(other.slashSprite), currentFrame(other.currentFrame),
       frameTime(other.frameTime), elapsedTime(other.elapsedTime), lastAttackTime(other.lastAttackTime), velocityX(other.velocityX), velocityY(other.velocityY), gravity(other.gravity),
-      jumpCount(other.jumpCount), maxJumps(other.maxJumps), maxFallSpeed(other.maxFallSpeed), lastJumpTime(other.lastJumpTime) {}
+      jumpCount(other.jumpCount), maxJumps(other.maxJumps), maxFallSpeed(other.maxFallSpeed), lastJumpTime(other.lastJumpTime), lastHitTime(other.lastHitTime) {}
 
 Player& Player::operator=(const Player& other) {
     if (this != &other) {
         Entity::operator=(other);
-        health = other.health;
         state = other.state;
         scale = other.scale;
         facingRight = other.facingRight;
@@ -41,6 +40,7 @@ Player& Player::operator=(const Player& other) {
         maxJumps = other.maxJumps;
         maxFallSpeed = other.maxFallSpeed;
         lastJumpTime = other.lastJumpTime;
+        lastHitTime = other.lastHitTime;
         idleSprites = other.idleSprites;
         jumpSprites = other.jumpSprites;
         runSprites = other.runSprites;
@@ -82,6 +82,17 @@ void Player::jump() {
     }
 }
 
+void Player::die() {
+    // Reset player
+    x = 0;
+    y = 0;
+    health = 50.0f;
+    state = State::Idle;
+    facingRight = true;
+    isAirborne = true;
+    currentFrame = 0;
+}
+
 void Player::move(float dx, float dy) {
     velocityX = dx;
     velocityY += dy;
@@ -93,10 +104,21 @@ void Player::move(float dx, float dy) {
     }
 }
 
-// void Player::takeDamage(int amount) {
-//     health -= amount;
-//     if (health < 0) health = 0;
-// }
+void Player::takeDamage(float amount) {
+    auto currentTime = std::chrono::steady_clock::now();
+    auto elapsedHitTime = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - lastHitTime).count();
+    if (elapsedHitTime < 1000) {
+        return; // Cooldown period has not passed
+    }
+
+    health -= amount;
+    lastHitTime = currentTime; // Reset the hit timer
+
+    if (health <= 0) {
+        std::cout << "Player died" << std::endl;
+        die();
+    }
+}
 
 // void Player::heal(int amount) {
 //     health += amount;
@@ -269,7 +291,7 @@ void Player::updateAnimation(float _deltaTime) {
                 }
                 break;
             case State::Attacking:
-                break;
+                break;       
         }
     }
 }
@@ -281,7 +303,7 @@ void Player::handleCollisions(const std::vector<std::vector<int>>& levelData, co
     sf::FloatRect horizontalHitbox = sf::FloatRect(hitbox.left, hitbox.top + hitbox.height / 6, hitbox.width, hitbox.height * 2 / 3);
     sf::FloatRect verticalHitbox = sf::FloatRect(hitbox.left + hitbox.width / 6, hitbox.top, hitbox.width * 2 / 3, hitbox.height);
     sf::FloatRect feetVerticalHitbox = sf::FloatRect(hitbox.left + hitbox.width / 6, hitbox.top + hitbox.height * 4 / 5, hitbox.width * 2 / 3, hitbox.height / 5);
-
+    
     // Let's check for future collisions meaning we add the velocity to the hitbox
     horizontalHitbox.left += velocityX * deltaTime;
     verticalHitbox.top += velocityY * deltaTime;
@@ -313,7 +335,7 @@ void Player::handleCollisions(const std::vector<std::vector<int>>& levelData, co
                     rect2.setFillColor(sf::Color::Transparent);
                     rect2.setOutlineColor(sf::Color::Magenta);
                     rect2.setOutlineThickness(3.0f);
-
+                    
                     if (collisionType == CollisionType::Solid) {
                         // Check left part of horizontal hitbox for hitting the right side of tiles
                         if (velocityX < 0 && horizontalHitbox.left + horizontalHitbox.width >= tileRect.left + velocityX) {
@@ -324,7 +346,7 @@ void Player::handleCollisions(const std::vector<std::vector<int>>& levelData, co
                             velocityX = 0;
                         }
                     }
-                }
+                } 
                 else if (verticalHitbox.intersects(tileRect)) {
 
                     // DEBUG
@@ -333,7 +355,7 @@ void Player::handleCollisions(const std::vector<std::vector<int>>& levelData, co
                     rect1.setFillColor(sf::Color::Transparent);
                     rect1.setOutlineColor(sf::Color::Red);
                     rect1.setOutlineThickness(3.0f);
-
+                    
                     rect2.setPosition(tileRect.left, tileRect.top);
                     rect2.setSize(sf::Vector2f(tileRect.width, tileRect.height));
                     rect2.setFillColor(sf::Color::Transparent);
@@ -355,7 +377,7 @@ void Player::handleCollisions(const std::vector<std::vector<int>>& levelData, co
                         }
                     }
                 }
-
+                
                 if (feetVerticalHitbox.intersects(tileRect)) {
 
                     // DEBUG
@@ -388,7 +410,7 @@ void Player::handleCollisions(const std::vector<std::vector<int>>& levelData, co
     // Check if the character is touching the bottom of the screen
     if (hitbox.top + hitbox.height >= 700) {
         y = 0;
-
+        
         velocityY = 0.0f;
         jumpCount = 0;
         isAirborne = false;

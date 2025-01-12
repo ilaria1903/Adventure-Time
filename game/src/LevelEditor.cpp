@@ -54,7 +54,7 @@ void LevelEditor::handleInput(sf::RenderWindow& window, const sf::Vector2f& _pla
 
 void LevelEditor::render(sf::RenderWindow& window, const sf::Vector2f& _playerPos) {
     sf::Vector2i mousePos = sf::Mouse::getPosition(window);
-
+    
     // Add X player position to mouse position
     sf::Vector2f adjustedPos = sf::Vector2f(mousePos.x + _playerPos.x - window.getSize().x / 2, mousePos.y);
 
@@ -66,7 +66,7 @@ void LevelEditor::render(sf::RenderWindow& window, const sf::Vector2f& _playerPo
 
     level.setLevelData(levelData);
     level.render(window);
-
+    
     // Draw the current tile sprite at the mouse position over the level
     if (gridX >= 0 && gridX < (int)levelData[0].size() && gridY >= 0 && gridY < (int)levelData.size()) {
         currentTileSprite.setPosition(gridX * tileWidth * tileScale, gridY * tileHeight * tileScale);

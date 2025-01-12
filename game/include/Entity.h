@@ -11,9 +11,11 @@
 class Entity {
 public:
     Entity();
-    Entity(const std::string& name, int x, int y);
+    Entity(const std::string& name, float health, int x, int y);
     virtual ~Entity();
 
+    virtual void takeDamage(float amount) = 0;
+    virtual void move(float dx, float dy) = 0;
     virtual void update(float deltaTime) = 0;
     virtual void update(float deltaTime, const std::vector<std::vector<int>>& levelData, const std::vector<CollisionType>& collisionData, int tileWidth, int tileHeight) = 0;
     virtual void render(sf::RenderWindow& window) = 0;
@@ -23,6 +25,7 @@ public:
 
 protected:
     std::string name;
+    float health;
     int x, y;
     sf::Sprite sprite;
     sf::Texture texture;
@@ -37,17 +40,17 @@ public:
     void update(float deltaTime) override;
     void update(float deltaTime, const std::vector<std::vector<int>>& levelData, const std::vector<CollisionType>& collisionData, int tileWidth, int tileHeight) override;
     void render(sf::RenderWindow& window) override;
+    void takeDamage(float amount) override;
+    void move(float dx, float dy) override;
     bool operator==(const Enemy& other) const {
         return (name == other.name && x == other.x && y == other.y && health == other.health);
     }
     sf::Sprite getSprite() const { return sprite; }
     float getHealth() const { return health; }
-    void takeDamage(float amount) { health -= amount; }
     Entity* clone() const override;
 private:
     std::vector<std::vector<int>> levelData;
     std::vector<CollisionType> collisionData;
-    float health;
     float speed;
     float velocityY;
     int direction;
@@ -61,6 +64,8 @@ public:
     void update(float deltaTime) override;
     void update(float deltaTime, const std::vector<std::vector<int>>& levelData, const std::vector<CollisionType>& collisionData, int tileWidth, int tileHeight) override;
     void render(sf::RenderWindow& window) override;
+    void takeDamage(float amount) override;
+    void move(float dx, float dy) override;
     Entity* clone() const override;
 private:
     std::vector<std::vector<int>> levelData;
@@ -75,6 +80,8 @@ public:
     void update(float deltaTime) override;
     void update(float deltaTime, const std::vector<std::vector<int>>& levelData, const std::vector<CollisionType>& collisionData, int tileWidth, int tileHeight) override;
     void render(sf::RenderWindow& window) override;
+    void takeDamage(float amount) override;
+    void move(float dx, float dy) override;
     Entity* clone() const override;
 
 private:

@@ -43,7 +43,7 @@ private:
     bool isFocused;
     Interface ui;
     DialogueBox dialogueBox;
-    std::vector<Enemy> enemies;
+    std::vector<Enemy*> enemies;
     PropsManager propsManager;
 };
 

@@ -42,8 +42,8 @@ void Interface::updateCherries(int count) {
     cherryText.setString("x " + std::to_string(cherryCount));
 }
 
-void Interface::updateHearts(int health) {
-    playerHealth = health;
+void Interface::updateHearts(float health) {
+    playerHealth = health / 10.0f;
     for (int i = 0; i < 5; ++i) {
         if (i < playerHealth) {
             heartSprites[i].setTextureRect(sf::IntRect(0, 0, 17, 17)); // Full heart
