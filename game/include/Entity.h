@@ -21,6 +21,8 @@ public:
     virtual void render(sf::RenderWindow& window) = 0;
     virtual Entity* clone() const = 0;
 
+    float getHealth() const { return health; }
+
     static int getInstanceCount();
 
 protected:
@@ -46,7 +48,7 @@ public:
         return (name == other.name && x == other.x && y == other.y && health == other.health);
     }
     sf::Sprite getSprite() const { return sprite; }
-    float getHealth() const { return health; }
+    // float getHealth() const { return health; }
     Entity* clone() const override;
 private:
     std::vector<std::vector<int>> levelData;

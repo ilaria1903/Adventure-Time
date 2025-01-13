@@ -46,7 +46,7 @@ public:
     // State getState() const { return state; }
 
     // void setHealth(int health) { this->health = health; }
-    int getHealth() const { return health; }
+    // int getHealth() const { return health; }
 
     friend std::ostream& operator<<(std::ostream& os, const Player& character);
 

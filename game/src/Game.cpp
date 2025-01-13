@@ -76,15 +76,8 @@ void Game::start() {
         ui.updateHearts(character.getHealth());
 
         // Load enemy and clone it
-        Enemy* enemy = new Enemy("Enemy", 100, 100);
+        Entity* enemy = new Enemy("Enemy", 100, 100);
         enemies.push_back(enemy);
-
-        // Cast cu sens
-        // enemies.push_back(*dynamic_cast<Enemy*>(enemy.clone()));
-        // enemies.push_back(*dynamic_cast<Enemy*>(enemy.clone()));
-
-        // enemies.push_back(enemy);
-        // enemies.push_back(enemy);
 
         std::cout << "Number of Entity instances: " << Entity::getInstanceCount() << std::endl;
 
@@ -157,7 +150,7 @@ void Game::handleMouseClick(const sf::Event::MouseButtonEvent& mouse) {
         
         // Weird bug where enemy has white box if not pointer
         // Spawn enemy at mouse position
-        Enemy* enemy = new Enemy("Enemy", worldPos.x, worldPos.y);
+        Entity* enemy = new Enemy("Enemy", worldPos.x, worldPos.y);
         enemies.push_back(enemy);
     }
 }
@@ -209,7 +202,8 @@ void Game::update() {
     }
 
     // Check for collision with enemies with 1 second invincibility
-    for (const Enemy* enemy : enemies) {
+    for (const Entity* ent : enemies) {
+        const Enemy* enemy = dynamic_cast<const Enemy*>(ent);
         if (character.getHitbox().intersects(enemy->getSprite().getGlobalBounds())) {
             // character.takeDamage(10);
             // Call virtual function from base class Entity
@@ -256,13 +250,12 @@ void Game::handleInput() {
         if (character.attack()) {
             // Check for collision with enemies
             for (size_t i = 0; i < enemies.size(); i++) {
+                const Enemy* enemy = dynamic_cast<const Enemy*>(enemies[i]);
                 auto swordHitbox = character.getHitbox();
                 swordHitbox.left += character.getFacingRight() ? swordHitbox.width : -swordHitbox.width;
-                if (swordHitbox.intersects(enemies[i]->getSprite().getGlobalBounds())) {
-                    // enemy.takeDamage(10);
+                if (swordHitbox.intersects(enemy->getSprite().getGlobalBounds())) {
                     // Call virtual function from base class Entity
-                    Entity* e = &(*enemies[i]);
-                    e->takeDamage(10);
+                    enemies[i]->takeDamage(10);
                     std::cout << "Enemy health: " << enemies[i]->getHealth() << '\n';
                     if (enemies[i]->getHealth() <= 0) {
                         // enemies.erase(std::remove(enemies.begin(), enemies.end(), enemy), enemies.end());
