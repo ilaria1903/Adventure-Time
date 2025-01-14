@@ -76,8 +76,14 @@ void Game::start() {
         ui.updateHearts(character.getHealth());
 
         // Load enemy and clone it
-        Entity* enemy = new Enemy("Enemy", 100, 100);
+        Entity* enemy = new FlyingEnemy("FlyingEnemy", 300, 100);
         enemies.push_back(enemy);
+
+        Entity* flyingEnemy = new FlyingEnemy("FlyingEnemy2", 500, 200);
+        enemies.push_back(flyingEnemy);
+
+        Entity* boss = new Boss("Boss", 640, 340);
+        enemies.push_back(boss);
 
         std::cout << "Number of Entity instances: " << Entity::getInstanceCount() << std::endl;
 
@@ -203,10 +209,7 @@ void Game::update() {
 
     // Check for collision with enemies with 1 second invincibility
     for (const Entity* ent : enemies) {
-        const Enemy* enemy = dynamic_cast<const Enemy*>(ent);
-        if (character.getHitbox().intersects(enemy->getSprite().getGlobalBounds())) {
-            // character.takeDamage(10);
-            // Call virtual function from base class Entity
+        if (character.getHitbox().intersects(ent->getSprite().getGlobalBounds())) {
             Entity* e = &character;
             e->takeDamage(10.0f);
             ui.updateHearts(character.getHealth());
@@ -250,10 +253,9 @@ void Game::handleInput() {
         if (character.attack()) {
             // Check for collision with enemies
             for (size_t i = 0; i < enemies.size(); i++) {
-                const Enemy* enemy = dynamic_cast<const Enemy*>(enemies[i]);
                 auto swordHitbox = character.getHitbox();
                 swordHitbox.left += character.getFacingRight() ? swordHitbox.width : -swordHitbox.width;
-                if (swordHitbox.intersects(enemy->getSprite().getGlobalBounds())) {
+                if (swordHitbox.intersects(enemies[i]->getSprite().getGlobalBounds())) {
                     // Call virtual function from base class Entity
                     enemies[i]->takeDamage(10);
                     std::cout << "Enemy health: " << enemies[i]->getHealth() << '\n';

@@ -22,6 +22,7 @@ public:
     virtual Entity* clone() const = 0;
 
     float getHealth() const { return health; }
+    sf::Sprite getSprite() const { return sprite; }
 
     static int getInstanceCount();
 
@@ -47,7 +48,7 @@ public:
     bool operator==(const Enemy& other) const {
         return (name == other.name && x == other.x && y == other.y && health == other.health);
     }
-    sf::Sprite getSprite() const { return sprite; }
+    // sf::Sprite getSprite() const { return sprite; }
     // float getHealth() const { return health; }
     Entity* clone() const override;
 private:
@@ -58,6 +59,16 @@ private:
     int direction;
     int tileWidth;
     int tileHeight;
+
+    sf::Texture spritesheet;
+    int currentFrame;
+    float frameTime;
+    float elapsedTime;
+    int frameWidth;
+    int frameHeight;
+    int numFrames;
+
+    void loadSpritesheet();
 };
 
 class Boss : public Entity {
@@ -74,6 +85,16 @@ private:
     std::vector<CollisionType> collisionData;
     int tileWidth;
     int tileHeight;
+
+    sf::Texture spritesheet;
+    int currentFrame;
+    float frameTime;
+    float elapsedTime;
+    int frameWidth;
+    int frameHeight;
+    int numFrames;
+
+    void loadSpritesheet();
 };
 
 class FlyingEnemy : public Entity {
@@ -84,15 +105,29 @@ public:
     void render(sf::RenderWindow& window) override;
     void takeDamage(float amount) override;
     void move(float dx, float dy) override;
+
+    // sf::Sprite getSprite() const { return sprite; }
+
     Entity* clone() const override;
 
 private:
     std::vector<std::vector<int>> levelData;
     std::vector<CollisionType> collisionData;
+    uint32_t direction;
+    int multiplier;
     float speedX;
     float speedY;
     int tileWidth;
     int tileHeight;
+    sf::Texture spritesheet;
+    int currentFrame;
+    float frameTime;
+    float elapsedTime;
+    int frameWidth;
+    int frameHeight;
+    int numFrames;
+
+    void loadSpritesheet();
 };
 
 #endif // ENTITY_H
